@@ -3,6 +3,7 @@ use std::io;
 
 trait Seq<T> {
     fn range(&self, start: usize, end: usize) -> &[T];
+    fn inverse(&self, &T) -> Option<usize>;
 }
 
 
@@ -16,6 +17,14 @@ impl Seq<u64> for PrimeSeq {
     fn range(&self, start: usize, end: usize) -> &[u64] {
         return &self.values[start..end];
     }
+
+
+    fn inverse(&self, elem: &u64) -> Option<usize> {
+        return match self.values.binary_search(elem) {
+            Ok(index) => Some(index),
+            Err(_) => None,
+        }
+    }
 }
 
 
@@ -28,7 +37,7 @@ fn find_primes(ps: &mut PrimeSeq, max: u64) {
     let mut number = ps.max;
     while number < max {
         let mut isprime = true;
-        for i in 0..isqrt(number) {
+        for i in 2..isqrt(number) {
             if number % i == 0 {
                 isprime = false;
             }
@@ -65,7 +74,7 @@ fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
     let start: usize = start as usize;
     for i in 0..size*size {
         let number = start + i;
-        grid[i] = number % 3;
+        grid[i] = number;
     }
     for i in 0..size {
         for j in 0..size {
@@ -77,7 +86,7 @@ fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 
 
 fn main() {
-    let mut primes = PrimeSeq { values: vec![], max: 0 };
+    let mut primes = PrimeSeq { values: vec![], max: 2 };
     find_primes(&mut primes, 2000);
     sequence(&primes, asknumber(), 8);
 }
