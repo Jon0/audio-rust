@@ -3,3 +3,7 @@
 name = "audio-rust"
 version = "0.0.1"
 authors = ["Jon0"]
+
+[dependencies]
+
+libc = "0.2"
