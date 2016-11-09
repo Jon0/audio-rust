@@ -1,13 +1,17 @@
 extern crate libc;
 
+
 mod device {
     mod alsa;
     pub mod mixer;
 }
 
+
 use std::io;
 
+
 use device::mixer::Mixer;
+
 
 trait Seq<T> {
     fn range(&self, start: usize, end: usize) -> &[T];
@@ -94,7 +98,10 @@ fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 
 
 fn main() {
-    let mut mux = Mixer { id: 1 };
+    let mut mux = Mixer::new();
+    Mixer::open(&mut mux);
+
+
     let mut primes = PrimeSeq { values: vec![], max: 2 };
     find_primes(&mut primes, 2000);
     sequence(&primes, asknumber(), 8);
