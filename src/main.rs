@@ -98,8 +98,12 @@ fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 
 
 fn main() {
+    let data = vec![0; 1024];
     let mut mux = Mixer::new();
     Mixer::open(&mut mux);
+    Mixer::set_params(&mut mux);
+    Mixer::prepare(&mut mux);
+    Mixer::play(&mut mux, &data);
 
 
     let mut primes = PrimeSeq { values: vec![], max: 2 };
