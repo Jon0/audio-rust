@@ -97,13 +97,19 @@ fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 }
 
 
-fn main() {
+fn init_mixer(mixer: &mut Mixer) {
     let data = vec![0; 1024];
-    let mut mux = Mixer::new();
-    Mixer::open(&mut mux);
-    Mixer::set_params(&mut mux);
-    Mixer::prepare(&mut mux);
-    Mixer::play(&mut mux, &data);
+    Mixer::set_params(&mut mixer);
+    Mixer::prepare(&mut mixer);
+    Mixer::play(&mut mixer, &data);
+}
+
+
+fn main() {
+    match Mixer::open("plughw:0,0") {
+        Ok(m) => init_mixer(m),
+        Err(e) => println!("Open: {}", error_string(e)),
+    }
 
 
     let mut primes = PrimeSeq { values: vec![], max: 2 };
