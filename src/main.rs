@@ -3,14 +3,15 @@ extern crate libc;
 
 mod device {
     mod alsa;
+    pub mod format;
     pub mod mixer;
 }
 
 
 use std::io;
+use std::f32;
 
-
-use device::mixer::Mixer;
+use device::mixer::*;
 
 
 trait Seq<T> {
@@ -97,18 +98,38 @@ fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 }
 
 
-fn init_mixer(mixer: &mut Mixer) {
-    let data = vec![0; 1024];
-    Mixer::set_params(&mut mixer);
-    Mixer::prepare(&mut mixer);
-    Mixer::play(&mut mixer, &data);
+fn init_audio(dev: &mut Device) {
+    match Params::new() {
+        Ok(mut params) => {
+            Device::setup(&dev, &mut params);
+            Device::prepare(&dev);
+        },
+        Err(e) => println!("Param error: {}", e.as_string()),
+    }
+}
+
+
+fn play_test(dev: &mut Device) {
+    let mut data = vec![0; 1024 * 1024];
+    for i in (0..1024 * 1024) {
+        let fq = (i as f32) * 0.03;
+        let x = fq.sin() * 2500.0;
+        data[i] = x as i16;
+    }
+    match Device::play(&dev, 8000, &data) {
+        Ok(size) => println!("Played {} samples", size),
+        Err(e) => println!("Play error: {}", e.as_string()),
+    }
 }
 
 
 fn main() {
-    match Mixer::open("plughw:0,0") {
-        Ok(m) => init_mixer(m),
-        Err(e) => println!("Open: {}", e.as_string()),
+    match Device::open("plughw:0,0") {
+        Ok(mut d) => {
+            init_audio(&mut d);
+            play_test(&mut d);
+        },
+        Err(e) => println!("Open error: {}", e.as_string()),
     }
 
 
