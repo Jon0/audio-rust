@@ -108,7 +108,7 @@ fn init_mixer(mixer: &mut Mixer) {
 fn main() {
     match Mixer::open("plughw:0,0") {
         Ok(m) => init_mixer(m),
-        Err(e) => println!("Open: {}", error_string(e)),
+        Err(e) => println!("Open: {}", e.as_string()),
     }
 
 

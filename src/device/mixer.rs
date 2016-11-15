@@ -11,13 +11,14 @@ pub type SndSize = snd_pcm_uframes_t;
 
 
 pub struct SndError {
+    name: String,
     err: c_int,
 }
 
 
 impl SndError {
-    pub fn new(e: c_int) -> SndError {
-        SndError { err: e }
+    pub fn new(n: &str, e: c_int) -> SndError {
+        SndError { name: String::from(n), err: e }
     }
 
 
@@ -55,7 +56,7 @@ impl Params {
             let err = snd_pcm_hw_params_malloc(&mut param_ptr);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_hw_params_malloc", err));
         }
         else {
             return Ok(Params { hw_params: param_ptr });
@@ -69,7 +70,7 @@ impl Params {
             err = snd_pcm_hw_params_get_buffer_size(self.hw_params, &mut size);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_hw_params_get_buffer_size", err));
         }
         else {
             return Ok(size);
@@ -92,7 +93,7 @@ impl Device {
             err = snd_pcm_open(&mut pcm_ptr, devname.as_ptr(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_open", err));
         }
         else {
             return Ok(Device { pcm: pcm_ptr });
@@ -111,20 +112,19 @@ impl Device {
             err = snd_pcm_nonblock(self.pcm, SND_PCM_NONBLOCK);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_nonblock", err));
         }
 
         unsafe {
             err = snd_pcm_prepare(self.pcm);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_prepare", err));
         }
         else {
             return Ok(Mixer { dev: self, size: 0 })
         }
     }
-
 }
 
 
@@ -141,7 +141,7 @@ impl Config {
             err = snd_pcm_hw_params_any(d.pcm, p.hw_params);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_hw_params_any", err));
         }
         else {
             return Ok(Config { dev: d, params: p });
@@ -173,14 +173,14 @@ impl Mixer {
             err = snd_pcm_wait(mixer.pcm, -1);
         }
         if err < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_wait", err));
         }
 
         unsafe {
             size = snd_pcm_writei(mixer.pcm, data.as_ptr() as *const c_void, available);
         }
         if size < 0 {
-            return Err(SndError::new(err));
+            return Err(SndError::new("snd_pcm_writei", err));
         }
         else {
             return Ok(size);
