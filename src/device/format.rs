@@ -1,10 +1,11 @@
 use libc::c_int;
+use libc::c_uint;
 
 use device::alsa::*;
 
 
 pub type SndFormatId = c_int;
-
+pub type SndChannel = c_uint;
 
 trait SndFormat {
     fn fmt() -> SndFormatId;

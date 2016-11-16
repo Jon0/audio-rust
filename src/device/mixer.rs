@@ -189,27 +189,29 @@ impl Device {
     }
 
 
-    pub fn play(&self, buf: SndSize, data: &[i16]) -> Result<SndSize, SndError> {
-        let available: SndSize = 1024 * 1024;
+    pub fn play(&self, data: &[i16]) -> Result<SndSize, SndError> {
+        let available: SndSize = data.len() as SndSize;
         let mut written: SndSize = 0;
         let mut size: snd_pcm_sframes_t = 0;
         let mut err = 0;
-        unsafe {
-            err = snd_pcm_wait(self.pcm, -1);
+        while written < available {
+            let subdata = &data[written as usize..data.len()];
+            unsafe {
+                err = snd_pcm_wait(self.pcm, -1);
+            }
+            if err < 0 {
+                return Err(SndError::new("snd_pcm_wait", err));
+            }
+            unsafe {
+                size = snd_pcm_writei(self.pcm, subdata.as_ptr() as *const c_void, available);
+            }
+            if size < 0 {
+                return Err(SndError::new("snd_pcm_writei", err));
+            }
+            else {
+                written += size as SndSize;
+            }
         }
-        if err < 0 {
-            return Err(SndError::new("snd_pcm_wait", err));
-        }
-
-
-        unsafe {
-            size = snd_pcm_writei(self.pcm, data.as_ptr() as *const c_void, available);
-        }
-        if size < 0 {
-            return Err(SndError::new("snd_pcm_writei", err));
-        }
-        else {
-            return Ok(size as SndSize);
-        }
+        return Ok(size as SndSize);
     }
 }

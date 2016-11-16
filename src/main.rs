@@ -109,14 +109,30 @@ fn init_audio(dev: &mut Device) {
 }
 
 
-fn play_test(dev: &mut Device) {
-    let mut data = vec![0; 1024 * 1024];
-    for i in (0..1024 * 1024) {
-        let fq = (i as f32) * 0.03;
+
+fn fill_sine(data: &mut [i16]) {
+    for t in (0..data.len()) {
+        let fq = (t as f32) * 0.03;
         let x = fq.sin() * 2500.0;
-        data[i] = x as i16;
+        data[t] = x as i16;
     }
-    match Device::play(&dev, 8000, &data) {
+}
+
+
+fn fill_bits(data: &mut [i16]) {
+    for t in (0..data.len()) {
+        let ts = ((t as f32) * 0.05) as i16;
+        let val = (ts | (ts >> 11 | ts >> 7)).wrapping_mul(ts & (ts >> 13 | ts >> 11));
+        data[t] = val;
+    }
+}
+
+
+
+fn play_test(dev: &mut Device) {
+    let mut data = vec![0; 1024 * 1024 * 32];
+    fill_bits(&mut data);
+    match Device::play(&dev, &data) {
         Ok(size) => println!("Played {} samples", size),
         Err(e) => println!("Play error: {}", e.as_string()),
     }
