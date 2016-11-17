@@ -7,6 +7,10 @@ mod device {
     pub mod mixer;
 }
 
+mod sound {
+    pub mod array;
+}
+
 
 use std::io;
 use std::f32;
@@ -121,7 +125,7 @@ fn fill_sine(data: &mut [i16]) {
 
 fn fill_bits(data: &mut [i16]) {
     for t in (0..data.len()) {
-        let ts = ((t as f32) * 0.05) as i16;
+        let ts = ((t as f32) * 0.1) as i16;
         let val = (ts | (ts >> 11 | ts >> 7)).wrapping_mul(ts & (ts >> 13 | ts >> 11));
         data[t] = val;
     }
