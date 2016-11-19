@@ -76,18 +76,18 @@ pub fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 
 
 
-pub fn fill_sine(data: &mut [i16]) {
+pub fn fill_sine<T: Num>(data: &mut [T]) {
     for t in 0..data.len() {
         let fq = (t as f32) * 0.03;
         let x = fq.sin() * 2500.0;
-        data[t] = x as i16;
+        data[t] = x as T;
     }
 }
 
 
-pub fn fill_bits(data: &mut [i16]) {
+pub fn fill_bits<T: Num>(data: &mut [T]) {
     for t in 0..data.len() {
-        let ts = ((t as f32) * 0.1) as i16;
+        let ts = ((t as f32) * 0.1) as T;
         let val = (ts | (ts >> 11 | ts >> 7)).wrapping_mul(ts & (ts >> 13 | ts >> 11));
         data[t] = val;
     }
