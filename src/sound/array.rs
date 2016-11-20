@@ -1,6 +1,7 @@
 use std::io;
 use std::f32;
-
+use std::ops::Add;
+use std::num::Int;
 
 pub trait Seq<T> {
     fn range(&self, start: usize, end: usize) -> &[T];
@@ -76,7 +77,7 @@ pub fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 
 
 
-pub fn fill_sine<T: Num>(data: &mut [T]) {
+pub fn fill_sine<T: Int>(data: &mut [T]) {
     for t in 0..data.len() {
         let fq = (t as f32) * 0.03;
         let x = fq.sin() * 2500.0;
@@ -85,10 +86,15 @@ pub fn fill_sine<T: Num>(data: &mut [T]) {
 }
 
 
-pub fn fill_bits<T: Num>(data: &mut [T]) {
+pub fn fill_bits<T: Int>(data: &mut [T]) {
     for t in 0..data.len() {
         let ts = ((t as f32) * 0.1) as T;
         let val = (ts | (ts >> 11 | ts >> 7)).wrapping_mul(ts & (ts >> 13 | ts >> 11));
         data[t] = val;
     }
+}
+
+
+pub fn fill_with<T: Add>(f: fn(usize, usize, usize) -> [T], data: &mut [T]) {
+
 }
