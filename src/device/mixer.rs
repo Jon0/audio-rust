@@ -203,7 +203,9 @@ impl Device {
                 return Err(SndError::new("snd_pcm_wait", err));
             }
             unsafe {
+                println!("writing to device");
                 size = snd_pcm_writei(self.pcm, subdata.as_ptr() as *const c_void, available);
+                println!("size: {}", size);
             }
             if size < 0 {
                 return Err(SndError::new("snd_pcm_writei", err));

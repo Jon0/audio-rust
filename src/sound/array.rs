@@ -1,7 +1,8 @@
 use std::io;
 use std::f32;
+use std::f64;
 use std::ops::Add;
-use std::num::Int;
+
 
 pub trait Seq<T> {
     fn range(&self, start: usize, end: usize) -> &[T];
@@ -77,24 +78,47 @@ pub fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
 
 
 
-pub fn fill_sine<T: Int>(data: &mut [T]) {
+pub fn fill_sine(data: &mut [i16]) {
     for t in 0..data.len() {
         let fq = (t as f32) * 0.03;
         let x = fq.sin() * 2500.0;
-        data[t] = x as T;
+        data[t] = x as i16;
     }
 }
 
 
-pub fn fill_bits<T: Int>(data: &mut [T]) {
+pub fn fill_bits(data: &mut [i16]) {
     for t in 0..data.len() {
-        let ts = ((t as f32) * 0.1) as T;
+        let ts = ((t as f32) * 0.1) as i16;
         let val = (ts | (ts >> 11 | ts >> 7)).wrapping_mul(ts & (ts >> 13 | ts >> 11));
-        data[t] = val;
+        data[t] = val as i16;
     }
 }
 
 
-pub fn fill_with<T: Add>(f: fn(usize, usize, usize) -> [T], data: &mut [T]) {
+pub fn fill_wave(start: usize, end: usize, max: usize, data: &mut [f64]) {
+    let mul = (f64::consts::PI * 2.0) / (data.len() as f64);
+    let vol = (data.len() as f64) * 0.05;
+    for t in 0..data.len() {
+        let fq = (t as f64) * mul;
+        let x = fq.sin() * vol;
+        data[t] += x as f64;
+    }
+}
 
+
+pub fn fill_with(filler: fn(usize, usize, usize, data: &mut [f64]), data: &mut [f64]) {
+    for start in 0..data.len() {
+        println!("filling {}/{}", start, data.len());
+        for end in (start+1)..data.len() {
+            filler(start, end, data.len(), &mut data[start..end]);
+        }
+    }
+}
+
+
+pub fn scale_data(out_data: &mut [i16], in_data: &[f64]) {
+    for t in 0..in_data.len() {
+        out_data[t] = in_data[t] as i16;
+    }
 }

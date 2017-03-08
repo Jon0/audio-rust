@@ -1,18 +1,9 @@
 extern crate libc;
 
-
-mod device {
-    mod alsa;
-    pub mod format;
-    pub mod mixer;
-}
-
-mod sound {
-    pub mod array;
-}
+mod device;
+mod sound;
 
 use std::io;
-
 use device::mixer::*;
 use sound::array::*;
 
@@ -48,14 +39,14 @@ fn init_audio(dev: &mut Device) {
 }
 
 
-
-
-
-
 fn play_test(dev: &mut Device) {
-    let mut data = vec![0; 1024 * 1024 * 32];
-    fill_bits(&mut data);
-    match Device::play(&dev, &data) {
+    let mut data = vec![0.0; 1024];
+    let mut out = vec![0; 1024 * 1024];
+    fill_with(fill_wave, &mut data);
+    scale_data(&mut out, &data);
+    //fill_sine(&mut out);
+    println!("playing...");
+    match Device::play(&dev, &out) {
         Ok(size) => println!("Played {} samples", size),
         Err(e) => println!("Play error: {}", e.as_string()),
     }
@@ -63,7 +54,7 @@ fn play_test(dev: &mut Device) {
 
 
 fn main() {
-    match Device::open("plughw:0,0") {
+    match Device::open("hw:0,0") {
         Ok(mut d) => {
             init_audio(&mut d);
             play_test(&mut d);
