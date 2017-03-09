@@ -1,6 +1,7 @@
 use std::ptr;
 use std::ffi::CStr;
 use std::ffi::CString;
+use std::cmp::min;
 use libc::c_int;
 use libc::c_uint;
 use libc::c_void;
@@ -79,6 +80,7 @@ impl Params {
             return Err(SndError::new("snd_pcm_hw_params_get_buffer_size", err));
         }
         else {
+            println!("Buffer size: {}", size);
             return Ok(size);
         }
     }
@@ -144,7 +146,7 @@ impl Device {
         let devname = CString::new(name).unwrap();
         let mut err = 0;
         unsafe {
-            err = snd_pcm_open(&mut pcm_ptr, devname.as_ptr(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
+            err = snd_pcm_open(&mut pcm_ptr, devname.as_ptr(), SND_PCM_STREAM_PLAYBACK, 0);
         }
         if err < 0 {
             return Err(SndError::new("snd_pcm_open", err));
@@ -171,13 +173,6 @@ impl Device {
     pub fn prepare(&self) -> Option<SndError> {
         let mut err = 0;
         unsafe {
-            err = snd_pcm_nonblock(self.pcm, SND_PCM_NONBLOCK);
-        }
-        if err < 0 {
-            return Some(SndError::new("snd_pcm_nonblock", err));
-        }
-
-        unsafe {
             err = snd_pcm_prepare(self.pcm);
         }
         if err < 0 {
@@ -189,31 +184,64 @@ impl Device {
     }
 
 
-    pub fn play(&self, data: &[i16]) -> Result<SndSize, SndError> {
-        let available: SndSize = data.len() as SndSize;
-        let mut written: SndSize = 0;
-        let mut size: snd_pcm_sframes_t = 0;
-        let mut err = 0;
-        while written < available {
-            let subdata = &data[written as usize..data.len()];
-            unsafe {
-                err = snd_pcm_wait(self.pcm, -1);
-            }
-            if err < 0 {
-                return Err(SndError::new("snd_pcm_wait", err));
-            }
-            unsafe {
-                println!("writing to device");
-                size = snd_pcm_writei(self.pcm, subdata.as_ptr() as *const c_void, available);
-                println!("size: {}", size);
-            }
-            if size < 0 {
-                return Err(SndError::new("snd_pcm_writei", err));
+    pub fn blocking(&self, block: bool) -> Result<i32, SndError> {
+        let mut result = 0;
+        unsafe {
+            if (block) {
+                result = snd_pcm_nonblock(self.pcm, 0);
             }
             else {
-                written += size as SndSize;
+                result = snd_pcm_nonblock(self.pcm, SND_PCM_NONBLOCK);
             }
         }
-        return Ok(size as SndSize);
+        if result < 0 {
+            return Err(SndError::new("snd_pcm_nonblock", result));
+        }
+        else {
+            return Ok(result);
+        }
+    }
+
+
+    pub fn wait(&self) -> Result<i32, SndError> {
+        let mut result = 0;
+        unsafe {
+            result = snd_pcm_wait(self.pcm, -1);
+        }
+        if result < 0 {
+            return Err(SndError::new("snd_pcm_wait", result));
+        }
+        else {
+            return Ok(result);
+        }
+    }
+
+
+    pub fn write_some(&self, data: &[i16]) -> Result<usize, SndError> {
+        let mut size = 0;
+        unsafe {
+            size = snd_pcm_writei(self.pcm, data.as_ptr() as *const c_void, data.len() as snd_pcm_uframes_t);
+        }
+        if size < 0 {
+            return Err(SndError::new("snd_pcm_writei", size as i32));
+        }
+        else {
+            return Ok(size as usize);
+        }
+    }
+
+
+    pub fn play(&self, data: &[i16]) -> Result<SndSize, SndError> {
+        let available = data.len();
+        let mut written: usize = 0;
+        while written < available {
+            let subdata = &data[written..min(written + 21024, data.len())];
+            self.wait();
+            match self.write_some(subdata) {
+                Ok(count) => written += count,
+                Err(err) => return Err(err),
+            }
+        }
+        return Ok(written as SndSize);
     }
 }

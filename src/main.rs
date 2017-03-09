@@ -31,8 +31,9 @@ fn asknumber() -> u32 {
 fn init_audio(dev: &mut Device) {
     match Params::new() {
         Ok(mut params) => {
-            Device::setup(&dev, &mut params);
-            Device::prepare(&dev);
+            dev.setup(&mut params);
+            dev.blocking(true);
+            dev.prepare();
         },
         Err(e) => println!("Param error: {}", e.as_string()),
     }
@@ -40,11 +41,11 @@ fn init_audio(dev: &mut Device) {
 
 
 fn play_test(dev: &mut Device) {
-    let mut data = vec![0.0; 1024];
+    //let mut data = vec![0.0; 1024];
     let mut out = vec![0; 1024 * 1024];
-    fill_with(fill_wave, &mut data);
-    scale_data(&mut out, &data);
-    //fill_sine(&mut out);
+    //fill_with(fill_wave, &mut data);
+    //scale_data(&mut out, &data);
+    fill_sine(&mut out);
     println!("playing...");
     match Device::play(&dev, &out) {
         Ok(size) => println!("Played {} samples", size),
@@ -54,7 +55,7 @@ fn play_test(dev: &mut Device) {
 
 
 fn main() {
-    match Device::open("hw:0,0") {
+    match Device::open("plughw:0,0") {
         Ok(mut d) => {
             init_audio(&mut d);
             play_test(&mut d);
