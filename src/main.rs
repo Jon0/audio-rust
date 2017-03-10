@@ -27,7 +27,6 @@ fn asknumber() -> u32 {
 }
 
 
-
 fn init_audio(dev: &mut Device) {
     match Params::new() {
         Ok(mut params) => {
@@ -55,7 +54,7 @@ fn play_test(dev: &mut Device) {
 
 
 fn main() {
-    match Device::open("plughw:0,0") {
+    match Device::open("hw:0,0") {
         Ok(mut d) => {
             init_audio(&mut d);
             play_test(&mut d);

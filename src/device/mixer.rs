@@ -70,6 +70,14 @@ impl Params {
         }
     }
 
+
+    pub fn free(&self) {
+        unsafe {
+            snd_pcm_hw_params_free(self.hw_params);
+        }
+    }
+
+
     pub fn buffer_size(&self) -> Result<SndSize, SndError> {
         let mut size: snd_pcm_uframes_t = 0;
         let mut err = 0;
@@ -187,7 +195,7 @@ impl Device {
     pub fn blocking(&self, block: bool) -> Result<i32, SndError> {
         let mut result = 0;
         unsafe {
-            if (block) {
+            if block {
                 result = snd_pcm_nonblock(self.pcm, 0);
             }
             else {
