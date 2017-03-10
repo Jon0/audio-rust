@@ -31,6 +31,7 @@ fn init_audio(dev: &mut Device) {
     match Params::new() {
         Ok(mut params) => {
             dev.setup(&mut params);
+            params.free();
             dev.blocking(true);
             dev.prepare();
         },

@@ -108,14 +108,14 @@ impl Params {
     }
 
 
-    pub fn format(&self, pcm: *mut snd_pcm_t) -> Option<SndError> {
+    pub fn format(&self, channels: usize, pcm: *mut snd_pcm_t) -> Option<SndError> {
         let mut err = 0;
         let mut rate: c_uint = 44100;
         unsafe {
             err = snd_pcm_hw_params_set_rate_resample(pcm, self.hw_params, 1);
             err = snd_pcm_hw_params_set_access(pcm, self.hw_params, SND_PCM_ACCESS_RW_INTERLEAVED);
             err = snd_pcm_hw_params_set_format(pcm, self.hw_params, SND_PCM_FORMAT_S16_LE);
-            err = snd_pcm_hw_params_set_channels(pcm, self.hw_params, 1);
+            err = snd_pcm_hw_params_set_channels(pcm, self.hw_params, channels as c_uint);
             err = snd_pcm_hw_params_set_rate_near(pcm, self.hw_params, &mut rate, ptr::null_mut());
         }
         if err < 0 {
@@ -144,6 +144,7 @@ impl Params {
 
 
 pub struct Device {
+    channels: usize,
     pcm: *mut snd_pcm_t,
 }
 
@@ -154,13 +155,13 @@ impl Device {
         let devname = CString::new(name).unwrap();
         let mut err = 0;
         unsafe {
-            err = snd_pcm_open(&mut pcm_ptr, devname.as_ptr(), SND_PCM_STREAM_PLAYBACK, 0);
+            err = snd_pcm_open(&mut pcm_ptr, devname.as_ptr(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK);
         }
         if err < 0 {
             return Err(SndError::new("snd_pcm_open", err));
         }
         else {
-            return Ok(Device { pcm: pcm_ptr });
+            return Ok(Device { channels: 2, pcm: pcm_ptr });
         }
     }
 
@@ -170,7 +171,7 @@ impl Device {
             Some(e) => return Some(e),
             None => {},
         }
-        match params.format(self.pcm) {
+        match params.format(self.channels, self.pcm) {
             Some(e) => return Some(e),
             None => {},
         }
@@ -226,9 +227,15 @@ impl Device {
 
 
     pub fn write_some(&self, data: &[i16]) -> Result<usize, SndError> {
+        let data_ptr = data.as_ptr() as *const c_void;
+        let frames = (data.len() / self.channels) as snd_pcm_uframes_t;
+        println!("writing  {} frames", frames);
         let mut size = 0;
         unsafe {
-            size = snd_pcm_writei(self.pcm, data.as_ptr() as *const c_void, data.len() as snd_pcm_uframes_t);
+            match self.wait() {
+                Ok(status) => size = snd_pcm_writei(self.pcm, data_ptr, frames),
+                Err(err) => return Err(err),
+            }
         }
         if size < 0 {
             return Err(SndError::new("snd_pcm_writei", size as i32));
@@ -240,11 +247,10 @@ impl Device {
 
 
     pub fn play(&self, data: &[i16]) -> Result<SndSize, SndError> {
-        let available = data.len();
+        let available = data.len() / self.channels;
         let mut written: usize = 0;
         while written < available {
-            let subdata = &data[written..min(written + 21024, data.len())];
-            self.wait();
+            let subdata = &data[written..data.len()];
             match self.write_some(subdata) {
                 Ok(count) => written += count,
                 Err(err) => return Err(err),
