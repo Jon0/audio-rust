@@ -1,7 +1,10 @@
+extern crate rand;
+
 use std::io;
 use std::f32;
 use std::f64;
 use std::ops::Add;
+use rand::{thread_rng, Rng};
 
 
 pub trait Seq<T> {
@@ -100,19 +103,20 @@ pub fn fill_wave(start: usize, end: usize, max: usize, data: &mut [f64]) {
     let mul = (f64::consts::PI * 2.0) / (data.len() as f64);
     let vol = (data.len() as f64) * 0.05;
     for t in 0..data.len() {
-        let fq = (t as f64) * mul;
+        let fq = (t as f64) * mul * 1000.0;
         let x = fq.sin() * vol;
         data[t] += x as f64;
     }
 }
 
 
-pub fn fill_with(filler: fn(usize, usize, usize, data: &mut [f64]), data: &mut [f64]) {
-    for start in 0..data.len() {
-        println!("filling {}/{}", start, data.len());
-        for end in (start+1)..data.len() {
-            filler(start, end, data.len(), &mut data[start..end]);
-        }
+pub fn fill_with(filler: fn(usize, usize, usize, data: &mut [f64]), data: &mut [f64], samples: usize) {
+    let mut rng = rand::thread_rng();
+    for s in 0..samples {
+        println!("filling {}/{}", s, samples);
+        let start = rng.gen_range(0, data.len());
+        let end = rng.gen_range(start, data.len());
+        filler(start, end, data.len(), &mut data[start..end]);
     }
 }
 
