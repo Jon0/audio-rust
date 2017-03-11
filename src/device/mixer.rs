@@ -110,7 +110,7 @@ impl Params {
 
     pub fn format(&self, channels: usize, pcm: *mut snd_pcm_t) -> Option<SndError> {
         let mut err = 0;
-        let mut rate: c_uint = 44100;
+        let mut rate: c_uint = 48000;
         unsafe {
             err = snd_pcm_hw_params_set_rate_resample(pcm, self.hw_params, 1);
             err = snd_pcm_hw_params_set_access(pcm, self.hw_params, SND_PCM_ACCESS_RW_INTERLEAVED);

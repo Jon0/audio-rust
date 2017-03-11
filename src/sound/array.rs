@@ -110,13 +110,31 @@ pub fn fill_wave(start: usize, end: usize, max: usize, data: &mut [f64]) {
 }
 
 
+pub fn fill_test(start: usize, end: usize, max: usize, data: &mut [f64]) {
+    let smodulo = (max % start) as f64;
+    let sdivide = (max / start) as f64;
+    let emodulo = (max % end) as f64;
+    let edivide = (max / end) as f64;
+    let mul = (f64::consts::PI * 2.0) / (data.len() as f64);
+    let vol = (((emodulo / edivide) * (smodulo / sdivide)).log(2.0) - 20.0) * 40.0;
+    println!("vol {}", vol);
+    for t in 0..data.len() {
+        let fq = (t as f64) * mul * 200.0;
+        let x = fq.sin() * vol;
+        data[t] += x as f64;
+    }
+}
+
+
 pub fn fill_with(filler: fn(usize, usize, usize, data: &mut [f64]), data: &mut [f64], samples: usize) {
     let mut rng = rand::thread_rng();
     for s in 0..samples {
         println!("filling {}/{}", s, samples);
         let start = rng.gen_range(0, data.len());
         let end = rng.gen_range(start, data.len());
-        filler(start, end, data.len(), &mut data[start..end]);
+        if (end - start) > 10000 {
+            filler(start, end, data.len(), &mut data[start..end]);
+        }
     }
 }
 

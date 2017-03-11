@@ -42,11 +42,10 @@ fn init_audio(dev: &mut Device) {
 
 
 fn play_test(dev: &mut Device) {
-    let mut data = vec![0.0; 1024 * 1024];
+    let mut buffer = vec![0.0; 1024 * 1024];
     let mut out = vec![0; 1024 * 1024];
-    fill_with(fill_wave, &mut data, 1000);
-    scale_data(&mut out, &data);
-    //fill_sine(&mut out);
+    fill_with(fill_test, &mut buffer, 1000);
+    scale_data(&mut out, &buffer);
     println!("playing...");
     match Device::play(&dev, &out) {
         Ok(size) => println!("Played {} samples", size),
