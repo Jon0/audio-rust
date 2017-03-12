@@ -127,12 +127,15 @@ pub fn fill_test(start: usize, end: usize, max: usize, data: &mut [f64]) {
 
 
 pub fn fill_with(filler: fn(usize, usize, usize, data: &mut [f64]), data: &mut [f64], samples: usize) {
+    let sample_min = 30000;
+    let sample_max = 1000000;
     let mut rng = rand::thread_rng();
     for s in 0..samples {
         println!("filling {}/{}", s, samples);
         let start = rng.gen_range(0, data.len());
         let end = rng.gen_range(start, data.len());
-        if (end - start) > 10000 {
+        let length = end - start;
+        if sample_min < length && length < sample_max {
             filler(start, end, data.len(), &mut data[start..end]);
         }
     }
