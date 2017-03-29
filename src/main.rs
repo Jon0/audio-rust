@@ -7,7 +7,7 @@ mod sound;
 use std::io;
 use device::mixer::*;
 use sound::array::*;
-
+use sound::sampler::*;
 
 
 fn printc(text: String, colour: u32) {
@@ -44,8 +44,8 @@ fn init_audio(dev: &mut Device) {
 fn play_test(dev: &mut Device) {
     let mut buffer = vec![0.0; 1024 * 1024];
     let mut out = vec![0; 1024 * 1024];
-    fill_with(fill_test, &mut buffer, 1000);
-    scale_data(&mut out, &buffer);
+    sample_function(test_fn, &mut buffer);
+    data_to_i16(&mut out, &buffer);
     println!("playing...");
     match Device::play(&dev, &out) {
         Ok(size) => println!("Played {} samples", size),

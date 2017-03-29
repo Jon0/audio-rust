@@ -142,7 +142,7 @@ pub fn fill_with(filler: fn(usize, usize, usize, data: &mut [f64]), data: &mut [
 }
 
 
-pub fn scale_data(out_data: &mut [i16], in_data: &[f64]) {
+pub fn data_to_i16(out_data: &mut [i16], in_data: &[f64]) {
     for t in 0..in_data.len() {
         out_data[t] = in_data[t] as i16;
     }
