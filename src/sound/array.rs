@@ -46,6 +46,33 @@ pub fn isqrt(number: u64) -> u64 {
 }
 
 
+pub fn factors(number: u64) -> Vec<u64> {
+    let mut result = vec![];
+    let mut remain = number;
+    let mut i = 2;
+    while (i <= remain) {
+        if remain % i == 0 {
+            remain /= i;
+            result.push(i);
+        }
+        else {
+            i += 1;
+        }
+    }
+    return result;
+}
+
+
+pub fn is_prime(number: u64) -> bool {
+    for i in 2..isqrt(number) {
+        if number % i == 0 {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 pub fn find_primes(ps: &mut PrimeSeq, max: u64) {
     let mut number = ps.max;
     while number < max {
@@ -61,6 +88,15 @@ pub fn find_primes(ps: &mut PrimeSeq, max: u64) {
         number += 1;
     }
     ps.max = max;
+}
+
+
+pub fn sum(numbers: Vec<u64>) -> u64 {
+    let mut total = 0;
+    for i in numbers {
+        total += i;
+    }
+    return total;
 }
 
 

@@ -54,7 +54,16 @@ fn play_test(dev: &mut Device) {
 }
 
 
+fn number_test() {
+    for i in 1..100 {
+        println!("{} has factors {:?} sum is {}", i, factors(i), sum(factors(i)));
+    }
+}
+
+
 fn main() {
+    number_test();
+
     match Device::open("hw:0,0") {
         Ok(mut d) => {
             init_audio(&mut d);

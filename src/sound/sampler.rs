@@ -27,7 +27,7 @@ pub fn apply_filler(filler: fn(usize, usize, f64) -> f64, time: usize, max: usiz
 }
 
 
-
+/* sample points */
 pub fn sample_function(filler: fn(usize, usize, f64) -> f64, data: &mut [f64]) {
     let v = 1000.0;
     let sample_rate = 44100.0;
@@ -54,4 +54,11 @@ pub fn sample_function(filler: fn(usize, usize, f64) -> f64, data: &mut [f64]) {
         }
         freq_state_start = freq_state_end;
     }
+}
+
+
+pub fn gen_sequence(pre_state: &[u64], time: u64) {
+
+    //
+
 }
