@@ -2,6 +2,7 @@ use std::io;
 use std::f32;
 use std::f64;
 
+use sound::array::*;
 
 pub fn create_freq_table(tuning: f64) -> [f64; 128] {
     let mut freq_table = [0.0; 128];
@@ -61,4 +62,54 @@ pub fn gen_sequence(pre_state: &[u64], time: u64) {
 
     //
 
+}
+
+
+pub fn generating_function(data: &mut [f64]) {
+    let v = 1000.0;
+    let sample_rate = 44100.0;
+    let block_count = 32;
+
+    let block_length = data.len() / block_count as usize;
+
+    let freq_table = create_freq_table(440.0);
+    let mut freq_state_start = [0.0; 128];
+    let mut freq_state_end = [0.0; 128];
+    let mut sample_number = 0;
+
+    let mut seq_1 = 1;
+    let mut seq_2 = 2;
+    let mut seq_3 = block_count;
+
+    for block in 1..block_count {
+        println!("Block {} => {}", block, seq_2);
+        let f = factors(seq_2);
+        println!("Factors {:?}", f);
+        let m = 1.0 / (f.len() as f64);
+        for activation in 0..freq_state_end.len() {
+            freq_state_end[activation] *= 0.5;
+            let index = activation % f.len();
+            if f[index] == 2 {
+                freq_state_end[activation] += 0.5;
+            }
+        }
+
+        //apply_filler(filler, block, block_count, &freq_table, &mut freq_state_end);
+        for sample in 0..block_length {
+            let inter_start = sample as f64 / block_length as f64;
+            let inter_end = 1.0 - inter_start;
+            for freq in 0..freq_table.len() {
+                let mul = freq_table[freq] / sample_rate;
+                let fq = (sample_number as f64) * mul;
+
+                data[sample_number] += fq.sin() * (freq_state_start[freq] * inter_start + freq_state_end[freq] * inter_end) * v;
+            }
+            sample_number += 1;
+        }
+        freq_state_start = freq_state_end;
+
+        seq_2 = seq_1 + seq_2;
+        seq_1 = seq_2 - seq_1;
+        seq_3 = seq_3 - 1;
+    }
 }

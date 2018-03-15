@@ -44,7 +44,8 @@ fn init_audio(dev: &mut Device) {
 fn play_test(dev: &mut Device) {
     let mut buffer = vec![0.0; 1024 * 1024];
     let mut out = vec![0; 1024 * 1024];
-    sample_function(test_fn, &mut buffer);
+    //sample_function(test_fn, &mut buffer);
+    generating_function(&mut buffer);
     data_to_i16(&mut out, &buffer);
     println!("playing...");
     match Device::play(&dev, &out) {
