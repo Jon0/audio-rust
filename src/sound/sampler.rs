@@ -65,6 +65,15 @@ pub fn gen_sequence(pre_state: &[u64], time: u64) {
 }
 
 
+
+pub fn gen_from_previous(data: &[[f64; 128]]) -> [f64; 128] {
+    let mut result  = [0.0; 128];
+
+
+    return result;
+}
+
+
 pub fn generating_function(data: &mut [f64]) {
     let v = 1000.0;
     let sample_rate = 44100.0;
