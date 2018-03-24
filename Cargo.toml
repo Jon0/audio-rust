@@ -8,3 +8,4 @@ authors = ["Jon0"]
 
 libc = "0.2"
 rand = "0.3"
+num-rational = "0.1"

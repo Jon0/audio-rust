@@ -3,6 +3,7 @@ use std::f32;
 use std::f64;
 
 use sound::array::*;
+use sound::frame::*;
 
 pub fn create_freq_table(tuning: f64) -> [f64; 128] {
     let mut freq_table = [0.0; 128];
@@ -66,11 +67,11 @@ pub fn gen_sequence(pre_state: &[u64], time: u64) {
 
 
 
-pub fn gen_from_previous(data: &[[f64; 128]]) -> [f64; 128] {
+pub fn gen_from_previous(data: &[Frame]) -> Frame {
     let mut result  = [0.0; 128];
 
 
-    return result;
+    return Frame::from_u64(0);
 }
 
 

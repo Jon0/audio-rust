@@ -1,5 +1,6 @@
 extern crate libc;
 extern crate rand;
+extern crate num_rational;
 
 mod device;
 mod sound;
