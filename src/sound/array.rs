@@ -63,6 +63,45 @@ pub fn factors(number: u64) -> Vec<u64> {
 }
 
 
+/**
+ * a and b must be sorted arrays
+ * returns tuple of common and non-common factors
+ */
+pub fn common_factors(a: &Vec<u64>, b: &Vec<u64>) -> (Vec<u64>, Vec<u64>) {
+    let mut common = Vec::new();
+    let mut inverse = Vec::new();
+    let mut a_index = 0;
+    let mut b_index = 0;
+    let max_len = if a.len() > b.len() { a.len() } else { b.len() };
+
+    while a_index < a.len() && b_index < b.len() {
+        let a_val = a[a_index];
+        let b_val = b[b_index];
+
+        if (a_val == b_val) {
+            common.push(a_val);
+            a_index += 1;
+            b_index += 1;
+        }
+        else if (a_val < b_val) {
+            inverse.push(a_val);
+            a_index += 1;
+        }
+        else {
+            inverse.push(b_val);
+            b_index += 1;
+        }
+    }
+    for a_remain in a_index..a.len() {
+        inverse.push(a[a_remain]);
+    }
+    for b_remain in b_index..b.len() {
+        inverse.push(b[b_remain]);
+    }
+    return (common, inverse);
+}
+
+
 pub fn is_prime(number: u64) -> bool {
     for i in 2..isqrt(number) {
         if number % i == 0 {

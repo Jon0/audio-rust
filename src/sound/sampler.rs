@@ -76,18 +76,32 @@ pub fn gen_from_previous(data: &[Frame]) -> Frame {
 
 pub fn generating_function(data: &mut [f64]) {
 
-    let block_count: usize = 32;
+    let block_count: usize = 256;
     let block_length = data.len() / block_count as usize;
+
+    //let mut pre_frames = Vec::new();
+    let mut pre_frame = Frame::create(3, 7);
+
+
     for block in 0..block_count {
-        let block_u64 = block as u64;
-        let f = Frame::create(1352 + (block_u64 * 41), 29 + block_u64);
-        f.print_freqs(440.0);
+        println!("Block {}", block);
+
+        let x = block as u64;
+        let n = 3 + x;
+        let d = 7 + (x % 4);
+
+        let mut this_frame = pre_frame.create_next(n, d);
+        this_frame.print_freqs(440.0);
 
 
         let start = (block * block_length) as usize;
         let end = ((block + 1) * block_length) as usize;
-        f.fill(440.0, 1000.0, &mut data[start..end]);
+        let amp = 1200.0;
 
+        pre_frame.fill(440.0, amp, 0.0, start as f64, &mut data[start..end]);
+        this_frame.fill(440.0, 0.0, amp, start as f64, &mut data[start..end]);
+
+        pre_frame = this_frame;
     }
 
 
