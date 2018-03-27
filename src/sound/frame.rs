@@ -45,8 +45,8 @@ impl Frame {
         println!("Common {:?} / {:?}", numer_common, denom_common);
         println!("Uncommon {:?} / {:?}", numer_uncommon, denom_uncommon);
 
-        let numer_fct = numer_uncommon;
-        let denom_fct = denom_common;
+        let numer_fct = a_fct;
+        let denom_fct = b_fct;
         println!("Out {:?} / {:?}", numer_fct, denom_fct);
         let amp = 1.0 / ((numer_fct.len() * denom_fct.len()) as f64);
         let mut vec = Vec::new();
@@ -96,7 +96,8 @@ impl Frame {
             let freq = base * (*component.numer() as f64 / *component.denom() as f64);
             let sample_freq = freq / sample_rate;
             let fq = time * sample_freq;
-            out += fq.sin() * c_amp;
+            let amp_adjust = 20.0 / freq.sqrt();
+            out += fq.sin() * c_amp * amp_adjust;
         }
         return out;
     }

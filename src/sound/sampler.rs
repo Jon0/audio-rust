@@ -87,10 +87,12 @@ pub fn generating_function(data: &mut [f64]) {
         println!("Block {}", block);
 
         let x = block as u64;
-        let n = 3 + x;
-        let d = 7 + (x % 4);
+        //let n = 3 + x;
+        //let d = 7 + (x % 4);
+        let n = 1933 + (x % 5);
+        let d = 512 - x + (x % 8);
 
-        let mut this_frame = pre_frame.create_next(n, d);
+        let this_frame = Frame::create(n, d);
         this_frame.print_freqs(440.0);
 
 
