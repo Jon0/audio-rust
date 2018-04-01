@@ -4,6 +4,8 @@ use sound::array::*;
 
 
 pub struct Frame {
+    numer_product: u64,
+    denom_product: u64,
     numer_product_factors: Vec<u64>,
     denom_product_factors: Vec<u64>,
     components: Vec<(Rational64, f64)>
@@ -25,6 +27,8 @@ impl Frame {
         }
 
         Frame {
+            numer_product: a,
+            denom_product: b,
             numer_product_factors: a_fct,
             denom_product_factors: b_fct,
             components: vec
@@ -58,8 +62,46 @@ impl Frame {
         }
 
         Frame {
+            numer_product: product(&numer_fct),
+            denom_product: product(&denom_fct),
             numer_product_factors: numer_fct,
             denom_product_factors: denom_fct,
+            components: vec
+        }
+    }
+
+
+    pub fn create_from_sequence(frames: &[Frame]) -> Frame {
+        let mut numer_commons = Vec::new();
+        let mut denom_commons = Vec::new();
+
+        for frame in frames {
+            let next_a = frame.numer_product + 1;
+            let next_b = frame.denom_product - 1;
+
+            let a_fct = factors(next_a);
+            let b_fct = factors(next_b);
+
+            numer_commons.push(a_fct);
+            denom_commons.push(b_fct);
+        }
+
+        let new_a = high_freq_factors(&numer_commons, 2, 4);
+        let new_b = high_freq_factors(&denom_commons, 2, 4);
+        let amp = 1.0 / ((new_a.len() * new_b.len()) as f64);
+        let mut vec = Vec::new();
+
+        for x in &new_a {
+            for y in &new_b {
+                vec.push((Rational64::new(*x as i64, *y as i64), amp));
+            }
+        }
+
+        Frame {
+            numer_product: product(&new_a),
+            denom_product: product(&new_b),
+            numer_product_factors: new_a,
+            denom_product_factors: new_b,
             components: vec
         }
     }
@@ -85,6 +127,11 @@ impl Frame {
         }
 
         println!("{:?}", out);
+    }
+
+
+    pub fn print_factors(&self) {
+        println!("{:?} / {:?}", self.numer_product_factors, self.denom_product_factors);
     }
 
 

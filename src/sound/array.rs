@@ -41,6 +41,8 @@ impl Seq<u64> for PrimeSeq {
 }
 
 
+
+
 pub fn isqrt(number: u64) -> u64 {
     return (number as f64).sqrt().ceil() as u64;
 }
@@ -58,6 +60,15 @@ pub fn factors(number: u64) -> Vec<u64> {
         else {
             i += 1;
         }
+    }
+    return result;
+}
+
+
+pub fn subset_products(factors: &Vec<u64>) -> Vec<u64> {
+    let mut result = Vec::new();
+    for a in factors {
+
     }
     return result;
 }
@@ -112,6 +123,118 @@ pub fn is_prime(number: u64) -> bool {
 }
 
 
+/*
+ * maximum set
+ */
+pub fn maximum_factors(factors: &Vec<Vec<u64>>) -> Vec<u64> {
+    let mut progress = vec![0; factors.len() as usize];
+    let mut common = Vec::new();
+
+    let mut complete = false;
+    while !complete {
+        let mut nothing_remaining = true;
+        let mut lowest_index = 0;
+        let mut lowest = 999999999;
+        let mut freq = 1;
+
+        for index in 0..factors.len() {
+            let current_set = &factors[index];
+            let current_progress = progress[index];
+            if (current_progress < current_set.len()) {
+                nothing_remaining = false;
+
+                // check if value is lowest
+                let val = current_set[current_progress];
+                if val < lowest {
+                    lowest_index = index;
+                    lowest = val;
+                }
+            }
+        }
+
+        for index in 0..factors.len() {
+            let current_set = &factors[index];
+            let current_progress = progress[index];
+            if (current_progress < current_set.len() && current_set[current_progress] <= lowest) {
+                progress[index] += 1;
+            }
+        }
+
+        complete = nothing_remaining;
+        if !complete {
+            common.push(lowest);
+        }
+    }
+    return common;
+}
+
+
+
+pub fn high_freq_factors(factors: &Vec<Vec<u64>>, min_freq: u64, limit: u64) -> Vec<u64> {
+    let all_factors = maximum_factors(factors);
+    let mut progress = vec![0; factors.len() as usize];
+    let mut common = Vec::new();
+
+    if (all_factors.len() == 0) {
+        return common;
+    }
+
+    let mut first = 0;
+    let highest = all_factors[all_factors.len() - 1];
+    for comp in all_factors {
+        if comp > 255 {
+            return common;
+        }
+
+
+        let mut lowest_index = 0;
+        let mut lowest = highest;
+        let mut freq = 0;
+        let mut have_remaining = false;
+        //println!("{:?} :: {:?} :: {:?}", first, progress, lowest);
+
+        for index in 0..factors.len() {
+            let current_set = &factors[index];
+            let current_progress = progress[index];
+            if (current_progress < current_set.len()) {
+
+                have_remaining = true;
+                let val = current_set[current_progress];
+                if val <= lowest {
+                    lowest_index = index;
+                    lowest = val;
+                }
+                if val == comp {
+                    freq += 1;
+                }
+            }
+        }
+
+
+        if !have_remaining || common.len() > limit as usize {
+            return common;
+        }
+
+
+        if freq > min_freq {
+            first += 1;
+            for index in 0..factors.len() {
+                let current_set = &factors[index];
+                let current_progress = progress[index];
+                if (current_progress < current_set.len() && current_set[current_progress] <= comp) {
+                    progress[index] += 1;
+                }
+            }
+            common.push(comp);
+        }
+        else {
+            progress[lowest_index] += 1;
+        }
+    }
+    return common;
+}
+
+
 pub fn find_primes(ps: &mut PrimeSeq, max: u64) {
     let mut number = ps.max;
     while number < max {
@@ -136,6 +259,15 @@ pub fn sum(numbers: Vec<u64>) -> u64 {
         total += i;
     }
     return total;
+}
+
+
+pub fn product(numbers: &Vec<u64>) -> u64 {
+    let mut p = 1;
+    for i in numbers {
+        p *= i;
+    }
+    return p;
 }
 
 
