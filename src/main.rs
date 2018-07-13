@@ -4,6 +4,7 @@ extern crate num_integer;
 extern crate num_rational;
 
 mod device;
+mod parser;
 mod player;
 mod sound;
 
