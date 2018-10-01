@@ -9,11 +9,16 @@ mod player;
 mod sound;
 
 use std::io;
+use player::player::*;
 use device::mixer::*;
 use sound::array::*;
+use sound::generator::*;
 use sound::sampler::*;
 
 
+/**
+ * Moved to AudioDriver
+ */
 fn init_audio(dev: &mut Device) {
     match Params::new() {
         Ok(mut params) => {
@@ -38,7 +43,7 @@ fn play_test(dev: &mut Device) {
 
     println!("playing...");
 
-    match Device::play(&dev, &out) {
+    match dev.output(&out) {
         Ok(size) => println!("Played {} samples", size),
         Err(e) => println!("Play error: {}", e.as_string()),
     }
@@ -46,9 +51,11 @@ fn play_test(dev: &mut Device) {
 }
 
 
-fn use_device(mut dev: &mut Device) {
-    init_audio(&mut dev);
-    play_test(&mut dev);
+fn use_device(mut dev: Device) {
+    let mut generator = FrameGenerator::new();
+    let player = AudioPlayer::new();
+
+    player.run(&mut dev, &mut generator);
 
     // wait for completion
     let mut buf = String::new();
@@ -57,9 +64,9 @@ fn use_device(mut dev: &mut Device) {
 
 
 fn main() {
-    match Device::open("hw:0,0") {
+    match Device::open("hw:1,0") {
         Ok(mut dev) => {
-            use_device(&mut dev)
+            use_device(dev)
         },
         Err(err) => println!("Open error: {}", err.as_string()),
     }

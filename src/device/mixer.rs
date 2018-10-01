@@ -248,7 +248,7 @@ impl Device {
     }
 
 
-    pub fn play(&self, data: &[i16]) -> Result<SndSize, DriverError> {
+    pub fn output(&self, data: &[i16]) -> Result<SndSize, DriverError> {
         let available = data.len() / self.channels;
         let mut written: usize = 0;
         while written < available {
@@ -259,5 +259,29 @@ impl Device {
             }
         }
         return Ok(written as SndSize);
+    }
+}
+
+
+impl AudioDriver for Device {
+    fn init(&self) {
+        match Params::new() {
+            Ok(mut params) => {
+                self.setup(&mut params);
+                params.buffer_size();
+                params.free();
+                self.blocking(true);
+                self.prepare();
+
+            },
+            Err(e) => println!("Param error: {}", e.as_string()),
+        }
+    }
+
+    fn play(&self, data: &[i16]) {
+        match self.output(&data) {
+            Ok(size) => println!("Played {} samples", size),
+            Err(e) => println!("Play error: {}", e.as_string()),
+        }
     }
 }
