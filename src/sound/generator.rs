@@ -90,7 +90,7 @@ impl FrameGenerator {
 impl Generator for FrameGenerator {
     fn fill_async(&mut self, offset: usize, out_data: &mut [i16]) {
 
-        let mut buffer = vec![0.0; 1024 * 1024];
+        let mut buffer = vec![0.0; out_data.len()];
         self.generating_function(offset, &mut buffer);
 
         for t in 0..buffer.len() {

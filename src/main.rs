@@ -65,7 +65,7 @@ fn use_device(mut dev: Device) {
 
 
 fn main() {
-    match Device::open("hw:1,0") {
+    match Device::open("hw:0,0") {
         Ok(mut dev) => {
             use_device(dev)
         },
