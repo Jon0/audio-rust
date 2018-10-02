@@ -150,11 +150,12 @@ impl Frame {
     }
 
 
-    pub fn fill(&self, base: f64, start_amp: f64, end_amp: f64, start_time: f64, out: &mut [f64]) {
+    pub fn fill(&self, base: f64, start_amp: f64, end_amp: f64, start_time: f64, offset: usize, frame_samples: usize, out: &mut [f64]) {
         for sample in 0..out.len() {
-            let percent = sample as f64 / out.len() as f64;
+            let real_sample = sample + offset;
+            let percent = real_sample as f64 / frame_samples as f64;
             let amp = percent * end_amp + (1.0 - percent) * start_amp;
-            let s = start_time + sample as f64;
+            let s = start_time + real_sample as f64;
 
             out[sample] += self.gen_sample(base, s) * amp;
         }
