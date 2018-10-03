@@ -14,8 +14,8 @@ pub struct FrameGenerator {
 
 
 impl FrameGenerator {
-    pub fn new() -> FrameGenerator {
-        return FrameGenerator {frame_samples: 1024, frames: Vec::new()};
+    pub fn new(samples_to_frame: usize) -> FrameGenerator {
+        return FrameGenerator {frame_samples: samples_to_frame, frames: Vec::new()};
     }
 
     /**

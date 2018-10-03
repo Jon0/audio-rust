@@ -35,7 +35,7 @@ fn init_audio(dev: &mut Device) {
 
 
 fn play_test(dev: &mut Device) {
-    let mut generator = FrameGenerator::new();
+    let mut generator = FrameGenerator::new(1024 * 64);
     let mut buffer = vec![0.0; 1024 * 1024 * 24];
     let mut out = vec![0; 1024 * 1024 * 24];
     //sample_function(test_fn, &mut buffer);
@@ -53,7 +53,7 @@ fn play_test(dev: &mut Device) {
 
 
 fn use_device(mut dev: Device) {
-    let mut generator = FrameGenerator::new();
+    let mut generator = FrameGenerator::new(1024 * 8);
     let player = AudioPlayer::new();
 
     player.run(&mut dev, &mut generator);
@@ -65,7 +65,7 @@ fn use_device(mut dev: Device) {
 
 
 fn main() {
-    match Device::open("hw:0,0") {
+    match Device::open("hw:1,0") {
         Ok(mut dev) => {
             use_device(dev)
         },

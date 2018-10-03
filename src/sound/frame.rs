@@ -1,6 +1,35 @@
 use num_rational::Rational64;
 
 use sound::array::*;
+use sound::number::*;
+
+
+/**
+ * replacement for Frame
+ */
+pub struct FrameBase {
+    denom: Factorised<u64>,
+    components: Vec<(Factorised<u64>, f64)>
+}
+
+
+impl FrameBase {
+    pub fn new() -> FrameBase {
+        return FrameBase {denom: Factorised::new(), components: Vec::new()};
+    }
+
+    pub fn from_pair(a: u64, b: u64) -> FrameBase {
+        let mut init = FrameBase::new();
+
+        return init;
+    }
+
+    pub fn push(&mut self, val: Rational64, amp: f64) {
+        self.denom.to_union(*val.denom() as u64);
+        self.components.push((Factorised::create(*val.numer() as u64), amp));
+    }
+}
+
 
 
 pub struct Frame {

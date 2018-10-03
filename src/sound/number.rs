@@ -8,7 +8,21 @@ pub struct Factorised<T> {
 
 
 impl<T: Copy + Integer> Factorised<T> {
+    pub fn new() -> Factorised<T> {
+        return Factorised {value: T::one(), factors: Vec::new()};
+    }
+
+
     pub fn create(number: T) -> Factorised<T> {
+        let factors = Factorised::get_factors(number);
+        Factorised {
+            value: number,
+            factors: factors
+        }
+    }
+
+
+    pub fn get_factors(number: T) -> Vec<T> {
         let mut result = vec![];
         let mut remain = number;
         let mut i = T::one() + T::one();
@@ -21,9 +35,23 @@ impl<T: Copy + Integer> Factorised<T> {
                 i = i + T::one();
             }
         }
-        Factorised {
-            value: number,
-            factors: result
+        return result;
+    }
+
+
+    /**
+     * create union of both sets
+     */
+    pub fn to_union(&mut self, number: T) {
+        let factors = Factorised::get_factors(number);
+    }
+
+    pub fn largest_factor(&self) -> T {
+        if (self.factors.is_empty()) {
+            return T::one();
+        }
+        else {
+            return self.factors[self.factors.len()];
         }
     }
 }
