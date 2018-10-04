@@ -43,8 +43,7 @@ impl FrameGenerator {
      */
     fn fill_frames(&mut self, size: usize) {
         for block in self.frames.len()..(size + 1) {
-            println!("Block {}", block);
-            let new_frame = create_next_frame_v1(&self.frames);
+            let new_frame = create_next_frame_v1(self.frames.len(), &self.frames);
             self.frames.push(new_frame);
         }
     }

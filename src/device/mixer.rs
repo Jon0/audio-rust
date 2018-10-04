@@ -231,7 +231,6 @@ impl Device {
     pub fn write_some(&self, data: &[i16]) -> Result<usize, DriverError> {
         let data_ptr = data.as_ptr() as *const c_void;
         let frames = (data.len() / self.channels) as snd_pcm_uframes_t;
-        println!("writing  {} frames", frames);
         let mut size = 0;
         unsafe {
             match self.wait() {

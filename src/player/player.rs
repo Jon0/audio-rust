@@ -40,7 +40,6 @@ impl AudioPlayer {
 
         driver.init();
         loop {
-            println!("Filling buffer");
             gen.fill_async(offset, &mut out);
             driver.play(&out);
             offset += out.len();
