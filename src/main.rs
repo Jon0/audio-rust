@@ -9,6 +9,7 @@ mod player;
 mod sound;
 
 use std::io;
+use std::env;
 use player::player::*;
 use device::mixer::*;
 use sound::array::*;
@@ -65,7 +66,9 @@ fn use_device(mut dev: Device) {
 
 
 fn main() {
-    match Device::open("hw:1,0") {
+    let args: Vec<String> = env::args().collect();
+
+    match Device::open(&args[1]) {
         Ok(mut dev) => {
             use_device(dev)
         },
