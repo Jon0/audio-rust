@@ -57,15 +57,3 @@ pub fn sample_function(filler: fn(usize, usize, f64) -> f64, data: &mut [f64]) {
         freq_state_start = freq_state_end;
     }
 }
-
-
-pub fn gen_sequence(pre_state: &[u64], time: u64) {
-
-    //
-
-}
-
-
-pub fn gen_from_previous(data: &[Frame]) -> Frame {
-    return Frame::create(114, 236);
-}

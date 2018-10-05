@@ -19,26 +19,6 @@ impl FrameGenerator {
     }
 
     /**
-     * the old generating function
-     */
-    fn create_frame(&mut self) {
-        // initial frames
-        if self.frames.len() == 0 {
-            for frame in 0..12 {
-                let x = frame as u64;
-                let n = 41 + x;
-                let d = 32 - x;
-                self.frames.push(Frame::create(n, d));
-            }
-        }
-
-        let end = self.frames.len() - 1;
-        let this_frame = Frame::create_from_sequence(&self.frames[end - 11 .. end]);
-        this_frame.print_factors();
-        self.frames.push(this_frame);
-    }
-
-    /**
      * new generation function
      */
     fn fill_frames(&mut self, size: usize) {

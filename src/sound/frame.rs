@@ -1,3 +1,4 @@
+use std::f64::consts::PI;
 use num_rational::Rational64;
 
 use sound::array::*;
@@ -7,32 +8,69 @@ use sound::number::*;
 /**
  * replacement for Frame
  */
-pub struct FrameBase {
+pub struct Frame {
     denom: Factorised<u64>,
     components: Vec<(Factorised<u64>, f64)>
 }
 
 
-impl FrameBase {
-    pub fn new() -> FrameBase {
-        return FrameBase {denom: Factorised::new(), components: Vec::new()};
+impl Frame {
+    pub fn new() -> Frame {
+        return Frame {denom: Factorised::new(), components: Vec::new()};
     }
 
-    pub fn from_pair(a: u64, b: u64) -> FrameBase {
-        let mut init = FrameBase::new();
+    pub fn from_pair(a: u64, b: u64) -> Frame {
+        let mut init = Frame::new();
 
+        let a_fct = factors(a);
+        let b_fct = factors(b);
+        let amp = 1.0 / ((a_fct.len() * b_fct.len()) as f64);
+        for x in &a_fct {
+            for y in &b_fct {
+                init.push(*x, *y, amp);
+            }
+        }
         return init;
     }
 
-    pub fn push(&mut self, val: Rational64, amp: f64) {
-        self.denom.to_union(*val.denom() as u64);
-        self.components.push((Factorised::create(*val.numer() as u64), amp));
+    pub fn push(&mut self, numer: u64, denom: u64, amp: f64) {
+        self.denom.to_union(denom);
+        self.components.push((Factorised::create(numer), amp));
+    }
+
+    pub fn push_ratio(&mut self, val: Rational64, amp: f64) {
+        self.push(*val.numer() as u64, *val.denom() as u64, amp);
+    }
+
+    pub fn gen_sample(&self, base: f64, time: f64) -> f64 {
+        let sample_rate = 44100.0;
+        let mut out = 0.0;
+
+        for (component, c_amp) in &self.components {
+            let freq = base * (component.val() as f64 / self.denom.val() as f64);
+            let sample_freq = (2.0 * PI * freq) / sample_rate;
+            let fq = time * sample_freq;
+            let amp_adjust = 20.0 / freq.sqrt();
+            out += fq.sin() * c_amp * amp_adjust;
+        }
+        return out;
+    }
+
+    pub fn fill(&self, base: f64, start_amp: f64, end_amp: f64, start_time: f64, offset: usize, frame_samples: usize, out: &mut [f64]) {
+        for sample in 0..out.len() {
+            let real_sample = sample + offset;
+            let percent = real_sample as f64 / frame_samples as f64;
+            let amp = percent * end_amp + (1.0 - percent) * start_amp;
+            let s = start_time + real_sample as f64;
+
+            out[sample] += self.gen_sample(base, s) * amp;
+        }
     }
 }
 
 
 
-pub struct Frame {
+pub struct FrameOld {
     numer_product: u64,
     denom_product: u64,
     numer_product_factors: Vec<u64>,
@@ -41,8 +79,8 @@ pub struct Frame {
 }
 
 
-impl Frame {
-    pub fn create(a: u64, b: u64) -> Frame {
+impl FrameOld {
+    pub fn create(a: u64, b: u64) -> FrameOld {
         let sum = Rational64::new(a as i64, b as i64);
         let a_fct = factors(a);
         let b_fct = factors(b);
@@ -55,7 +93,7 @@ impl Frame {
             }
         }
 
-        Frame {
+        FrameOld {
             numer_product: a,
             denom_product: b,
             numer_product_factors: a_fct,
@@ -65,7 +103,7 @@ impl Frame {
     }
 
 
-    pub fn create_next(&self, a: u64, b: u64) -> Frame {
+    pub fn create_next(&self, a: u64, b: u64) -> FrameOld {
 
         let sum = Rational64::new(a as i64, b as i64);
         let a_fct = factors(a);
@@ -90,7 +128,7 @@ impl Frame {
             }
         }
 
-        Frame {
+        FrameOld {
             numer_product: product(&numer_fct),
             denom_product: product(&denom_fct),
             numer_product_factors: numer_fct,
@@ -100,7 +138,7 @@ impl Frame {
     }
 
 
-    pub fn create_from_sequence(frames: &[Frame]) -> Frame {
+    pub fn create_from_sequence(frames: &[FrameOld]) -> FrameOld {
         let mut numer_commons = Vec::new();
         let mut denom_commons = Vec::new();
 
@@ -126,7 +164,7 @@ impl Frame {
             }
         }
 
-        Frame {
+        FrameOld {
             numer_product: product(&new_a),
             denom_product: product(&new_b),
             numer_product_factors: new_a,
@@ -163,36 +201,9 @@ impl Frame {
         println!("{:?} / {:?}", self.numer_product_factors, self.denom_product_factors);
     }
 
+    pub fn output(a: Frame, b: Frame, base: f64, inter: f64) {
 
-    pub fn gen_sample(&self, base: f64, time: f64) -> f64 {
-        let sample_rate = 44100.0;
-        let mut out = 0.0;
-
-        for &(component, c_amp) in &self.components {
-            let freq = base * (*component.numer() as f64 / *component.denom() as f64);
-            let sample_freq = freq / sample_rate;
-            let fq = time * sample_freq;
-            let amp_adjust = 20.0 / freq.sqrt();
-            out += fq.sin() * c_amp * amp_adjust;
-        }
-        return out;
     }
 
-
-    pub fn fill(&self, base: f64, start_amp: f64, end_amp: f64, start_time: f64, offset: usize, frame_samples: usize, out: &mut [f64]) {
-        for sample in 0..out.len() {
-            let real_sample = sample + offset;
-            let percent = real_sample as f64 / frame_samples as f64;
-            let amp = percent * end_amp + (1.0 - percent) * start_amp;
-            let s = start_time + real_sample as f64;
-
-            out[sample] += self.gen_sample(base, s) * amp;
-        }
-    }
-
-}
-
-
-pub fn output(a: Frame, b: Frame, base: f64, inter: f64) {
 
 }
