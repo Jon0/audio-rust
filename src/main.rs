@@ -54,7 +54,7 @@ fn play_test(dev: &mut Device) {
 
 
 fn use_device(mut dev: Device) {
-    let mut generator = FrameGenerator::new(1024 * 8);
+    let mut generator = FrameGenerator::new(1024 * 16);
     let player = AudioPlayer::new();
 
     player.run(&mut dev, &mut generator);

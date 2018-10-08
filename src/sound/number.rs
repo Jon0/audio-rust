@@ -1,6 +1,6 @@
 use num_integer::Integer;
 
-
+#[derive(Debug)]
 pub struct Factorised<T> {
     value: T,
     factors: Vec<T>
@@ -40,12 +40,22 @@ impl<T: Copy + Integer> Factorised<T> {
         return result;
     }
 
+
+    pub fn multiply(&mut self, number: T) {
+        self.value = self.value * number;
+        self.factors = Factorised::get_factors(self.value);
+    }
+
+
     /**
      * create union of both sets
+     * return the difference
      */
-    pub fn to_union(&mut self, number: T) {
+    pub fn to_union(&mut self, number: T) -> (T, T) {
         let factors = Factorised::get_factors(number);
         let mut new_factors = Vec::new();
+        let mut diff = T::one();
+        let mut keep = T::one();
 
         let mut this_index = 0;
         let mut other_index = 0;
@@ -57,24 +67,29 @@ impl<T: Copy + Integer> Factorised<T> {
             }
             else if (self.factors[this_index] < factors[other_index]) {
                 new_factors.push(self.factors[this_index]);
+                keep = keep * self.factors[this_index];
                 this_index += 1;
             }
             else {
                 new_factors.push(factors[other_index]);
+                diff = diff * factors[this_index];
                 other_index += 1;
             }
         }
         for i in this_index..self.factors.len() {
             new_factors.push(self.factors[i]);
+            keep = keep * self.factors[this_index];
         }
         for i in other_index..factors.len() {
             new_factors.push(factors[i]);
+            diff = diff * factors[i];
         }
         self.factors = new_factors;
         self.value = T::one();
         for f in &self.factors {
             self.value = self.value * T::from(*f);
         }
+        return (keep, diff);
     }
 
     pub fn largest_factor(&self) -> T {
