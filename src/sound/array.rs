@@ -252,7 +252,7 @@ pub fn find_primes(ps: &mut PrimeSeq, max: u64) {
     ps.max = max;
 }
 
-pub fn fib(n: u64) -> (u64, u64) {
+pub fn fib(n: u64) -> (u64, u64, u64) {
     let mut count = 1;
     let mut fb1 = 1;
     let mut fb2 = 2;
@@ -261,7 +261,7 @@ pub fn fib(n: u64) -> (u64, u64) {
         fb2 = fb1 + fb2;
         fb1 = fb2 - fb1;
     }
-    return (count, n - fb1);
+    return (count, n - fb1, fb2 - n);
 }
 
 

@@ -11,18 +11,18 @@ pub fn create_next_frame_v1(frame_number: usize, frames: &[Frame]) -> Frame {
     let mut stack = Vec::new();
     let mut remain = i;
     while remain > 0 {
-        let (sn, r) = fib(remain);
+        let (sn, r, e) = fib(remain);
         remain = r;
         let val = Factorised::create(sn);
-        stack.push(val);
+        stack.push((val, r, e));
     }
 
     println!("{:?} -> {:?}", i, stack);
 
     let mut n = 1;
     let mut d = 1;
-    for x in stack {
-        frame.push(x.val(), first, 1.0);
+    for (x, a, b) in stack {
+        frame.push(a, b, 1.0);
     }
 
     //return Frame::create(1 + ((i + 1) - fb1), 1 + (fb2 - i));

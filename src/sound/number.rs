@@ -72,13 +72,13 @@ impl<T: Copy + Integer> Factorised<T> {
             }
             else {
                 new_factors.push(factors[other_index]);
-                diff = diff * factors[this_index];
+                diff = diff * factors[other_index];
                 other_index += 1;
             }
         }
         for i in this_index..self.factors.len() {
             new_factors.push(self.factors[i]);
-            keep = keep * self.factors[this_index];
+            keep = keep * self.factors[i];
         }
         for i in other_index..factors.len() {
             new_factors.push(factors[i]);
