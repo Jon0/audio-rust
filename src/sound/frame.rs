@@ -34,14 +34,16 @@ impl Frame {
     }
 
     pub fn push(&mut self, numer: u64, denom: u64, amp: f64) {
-        let current = self.denom.val();
-        let (keep, diff) = self.denom.to_union(denom);
+        if numer > 0 && denom > 0 {
+            let current = self.denom.val();
+            let (keep, diff) = self.denom.to_union(denom);
 
-        // adjust existing components
-        for (component, c_amp) in &mut self.components {
-            component.multiply(diff);
+            // adjust existing components
+            for (component, c_amp) in &mut self.components {
+                component.multiply(diff);
+            }
+            self.components.push((Factorised::create(keep * numer), amp));
         }
-        self.components.push((Factorised::create(keep * numer), amp));
     }
 
     pub fn push_ratio(&mut self, val: Rational64, amp: f64) {
@@ -54,10 +56,13 @@ impl Frame {
 
         for (component, c_amp) in &self.components {
             let freq = base * (component.val() as f64 / self.denom.val() as f64);
-            let sample_freq = (2.0 * PI * freq) / sample_rate;
-            let fq = time * sample_freq;
-            let amp_adjust = 500.0 / (freq * freq.sqrt()); //freq.sqrt();
-            out += fq.sin() * c_amp * amp_adjust;
+
+            if (freq > 1.0) {
+                let sample_freq = (2.0 * PI * freq) / sample_rate;
+                let fq = time * sample_freq;
+                let amp_adjust = 500.0 / (freq * freq.sqrt()); //freq.sqrt();
+                out += fq.sin() * c_amp * amp_adjust;
+            }
         }
         return out;
     }
