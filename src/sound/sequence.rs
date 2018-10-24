@@ -19,15 +19,16 @@ pub fn create_next_frame_v1(frame_number: usize, frames: &[Frame]) -> Frame {
 
     //println!("{:?} -> {:?}", i, stack);
 
-    let mut n = i;
+    let mut n = 1;
     let mut d = 1;
-    for (x, a, b) in stack {
-        n += 1;
-        n *= a;
-        d += 1;
-        d *= b;
-        //frame.push(a, b, 1.0);
+    for fa in f {
+        for (x, a, b) in &stack {
+            n += (a % (fa + 1));
+            d += (b % (fa + 1));
+            //frame.push(a, b, 1.0);
+        }
     }
+
     println!("{:?} -> {:?}, {:?}", i, n, d);
 
     let a_fct = factors(n % (i + 1));

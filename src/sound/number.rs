@@ -24,6 +24,10 @@ impl<T: Copy + Integer> Factorised<T> {
         return self.value;
     }
 
+    pub fn factors(&self) -> &Vec<T> {
+        return &self.factors;
+    }
+
     pub fn get_factors(number: T) -> Vec<T> {
         let mut result = vec![];
         let mut remain = number;
