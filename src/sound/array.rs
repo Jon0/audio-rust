@@ -366,3 +366,9 @@ pub fn data_to_i16(out_data: &mut [i16], in_data: &[f64]) {
         out_data[t] = in_data[t] as i16;
     }
 }
+
+pub fn data_to_f32(out_data: &mut [f32], in_data: &[f64]) {
+    for t in 0..in_data.len() {
+        out_data[t] = in_data[t] as f32;
+    }
+}

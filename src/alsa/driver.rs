@@ -1,4 +1,4 @@
-use device::mixer::*;
+use alsa::mixer::*;
 use player::player::*;
 
 

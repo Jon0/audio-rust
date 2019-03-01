@@ -3,7 +3,7 @@ use sound::array::*;
 use sound::sequence::*;
 
 pub trait Generator {
-    fn fill_async(&mut self, offset: usize, out: &mut [i16]);
+    fn fill_async(&mut self, offset: usize, out: &mut [f32]);
 }
 
 
@@ -67,13 +67,13 @@ impl FrameGenerator {
 
 
 impl Generator for FrameGenerator {
-    fn fill_async(&mut self, offset: usize, out_data: &mut [i16]) {
+    fn fill_async(&mut self, offset: usize, out_data: &mut [f32]) {
 
         let mut buffer = vec![0.0; out_data.len()];
         self.generating_function(offset, &mut buffer);
 
         for t in 0..buffer.len() {
-            out_data[t] = buffer[t] as i16;
+            out_data[t] = buffer[t] as f32;
         }
     }
 }

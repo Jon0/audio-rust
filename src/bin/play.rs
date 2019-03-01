@@ -2,19 +2,15 @@ extern crate libc;
 extern crate rand;
 extern crate num_integer;
 extern crate num_rational;
-
-mod device;
-mod parser;
-mod player;
-mod sound;
+extern crate audio_rust;
 
 use std::io;
 use std::env;
-use player::player::*;
-use device::mixer::*;
-use sound::array::*;
-use sound::generator::*;
-use sound::sampler::*;
+use audio_rust::player::player::*;
+use audio_rust::alsa::mixer::*;
+use audio_rust::sound::array::*;
+use audio_rust::sound::generator::*;
+use audio_rust::sound::sampler::*;
 
 
 /**

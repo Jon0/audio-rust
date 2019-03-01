@@ -35,13 +35,19 @@ impl AudioPlayer {
     }
 
     pub fn run<D: AudioDriver, G: Generator>(&self, driver: &mut D, gen: &mut G) {
-        let mut out = vec![0; 1024 * 64];
+        let mut out = vec![0.0; 1024 * 64];
+        let mut buffer = vec![0; 1024 * 64];
         let mut offset = 0;
 
         driver.init();
         loop {
             gen.fill_async(offset, &mut out);
-            driver.play(&out);
+
+            for i in 0..out.len() {
+                buffer[i] = out[i] as i16;
+            }
+
+            driver.play(&buffer);
             offset += out.len();
         }
     }

@@ -1,7 +1,7 @@
 use libc::c_int;
 use libc::c_uint;
 
-use device::alsa::*;
+use alsa::ffi::*;
 
 
 pub type SndFormatId = c_int;
