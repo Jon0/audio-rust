@@ -8,6 +8,8 @@ use std::io;
 use std::env;
 use audio_rust::player::player::*;
 use audio_rust::alsa::mixer::*;
+use audio_rust::alsa::stream::*;
+use audio_rust::format::sample::*;
 use audio_rust::sound::array::*;
 use audio_rust::sound::generator::*;
 use audio_rust::sound::sampler::*;
@@ -58,6 +60,10 @@ fn use_device(mut dev: Device) {
     // wait for completion
     let mut buf = String::new();
     io::stdin().read_line(&mut buf).expect("failed to read line");
+
+    // testing new stream type
+
+    let stream = Stream::<StereoSample<i16>>::open(dev);
 }
 
 

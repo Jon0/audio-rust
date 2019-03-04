@@ -8,6 +8,7 @@ use libc::c_void;
 
 
 use alsa::ffi::*;
+use format::error::*;
 use player::player::*;
 
 
@@ -19,7 +20,7 @@ fn create_error_string(error_code: c_int) -> String {
 }
 
 
-fn create_error(from: &str, error_code: c_int) -> DriverError {
+pub fn create_error(from: &str, error_code: c_int) -> DriverError {
     let mut alsa_desc: &str;
     unsafe {
         let cstr = CStr::from_ptr(snd_strerror(error_code));
@@ -30,24 +31,6 @@ fn create_error(from: &str, error_code: c_int) -> DriverError {
 
 
 pub type SndSize = snd_pcm_uframes_t;
-
-
-pub struct Format {
-    channels: i32,
-    rate: i32,
-}
-
-
-impl Format {
-    pub fn new(ch: i32, r: i32) -> Format {
-        Format { channels: ch, rate: r }
-    }
-
-
-    pub fn format_id(&self) -> snd_pcm_format_t {
-        return SND_PCM_FORMAT_S16_LE;
-    }
-}
 
 
 pub struct Params {
@@ -167,6 +150,10 @@ impl Device {
         }
     }
 
+
+    pub fn get_pcm(&self) -> *mut snd_pcm_t {
+        return self.pcm;
+    }
 
     pub fn setup(&self, params: &mut Params) -> Option<DriverError> {
         match params.any(self.pcm) {

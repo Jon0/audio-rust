@@ -1,7 +1,8 @@
 use format::format::Format;
 
-pub trait Sample {
-	fn channels() -> usize;
+pub trait SampleType {
+	type Sample;
+	const Channels: usize;
 }
 
 pub struct StereoSample<T> {
@@ -9,8 +10,7 @@ pub struct StereoSample<T> {
 	right: T
 }
 
-impl<T> Sample for StereoSample<T> {
-	fn channels() -> usize {
-		return 2;
-	}
+impl<T> SampleType for StereoSample<T> {
+	type Sample = T;
+	const Channels: usize = 2;
 }

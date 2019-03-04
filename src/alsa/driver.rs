@@ -1,4 +1,5 @@
 use alsa::mixer::*;
+use format::error::*;
 use player::player::*;
 
 
