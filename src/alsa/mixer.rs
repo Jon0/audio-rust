@@ -77,7 +77,9 @@ impl Params {
     }
 
 
-    pub fn any(&self, pcm: *mut snd_pcm_t) -> Option<DriverError> {
+    pub fn any(&self, dev: &Device) -> Option<DriverError> {
+        
+        let mut pcm = dev.get_pcm();
         let mut err = 0;
         unsafe {
             err = snd_pcm_hw_params_any(pcm, self.hw_params);
@@ -91,13 +93,16 @@ impl Params {
     }
 
 
-    pub fn format(&self, channels: usize, pcm: *mut snd_pcm_t) -> Option<DriverError> {
+    pub fn format(&self, dev: &Device, rate_in: c_uint, channels: c_uint, format: c_int) -> Option<DriverError> {
+        
+        let mut pcm = dev.get_pcm();
         let mut err = 0;
-        let mut rate: c_uint = 48000;
+        let mut rate: c_uint = rate_in;
+
         unsafe {
             err = snd_pcm_hw_params_set_rate_resample(pcm, self.hw_params, 1);
             err = snd_pcm_hw_params_set_access(pcm, self.hw_params, SND_PCM_ACCESS_RW_INTERLEAVED);
-            err = snd_pcm_hw_params_set_format(pcm, self.hw_params, SND_PCM_FORMAT_S16_LE);
+            err = snd_pcm_hw_params_set_format(pcm, self.hw_params, format);
             err = snd_pcm_hw_params_set_channels(pcm, self.hw_params, channels as c_uint);
             err = snd_pcm_hw_params_set_rate_near(pcm, self.hw_params, &mut rate, ptr::null_mut());
         }
@@ -111,8 +116,11 @@ impl Params {
 
 
 
-    pub fn apply(&self, pcm: *mut snd_pcm_t) -> Option<DriverError> {
+    pub fn apply(&self, dev: &Device) -> Option<DriverError> {
+
+        let mut pcm = dev.get_pcm();
         let mut err = 0;
+
         unsafe {
             err = snd_pcm_hw_params(pcm, self.hw_params);
         }
@@ -127,7 +135,6 @@ impl Params {
 
 
 pub struct Device {
-    channels: usize,
     pcm: *mut snd_pcm_t,
 }
 
@@ -146,7 +153,7 @@ impl Device {
             return Err(create_error("snd_pcm_open", err));
         }
         else {
-            return Ok(Device { channels: 2, pcm: pcm_ptr });
+            return Ok(Device { pcm: pcm_ptr });
         }
     }
 
@@ -156,15 +163,15 @@ impl Device {
     }
 
     pub fn setup(&self, params: &mut Params) -> Option<DriverError> {
-        match params.any(self.pcm) {
+        match params.any(self) {
             Some(e) => return Some(e),
             None => {},
         }
-        match params.format(self.channels, self.pcm) {
+        match params.format(self, 48000, 2, SND_PCM_FORMAT_S16_LE) {
             Some(e) => return Some(e),
             None => {},
         }
-        return params.apply(self.pcm);
+        return params.apply(self);
     }
 
 
@@ -200,74 +207,4 @@ impl Device {
         }
     }
 
-
-    pub fn wait(&self) -> Result<i32, DriverError> {
-        let mut result = 0;
-        unsafe {
-            result = snd_pcm_wait(self.pcm, -1);
-        }
-        if result < 0 {
-            return Err(create_error("snd_pcm_wait", result));
-        }
-        else {
-            return Ok(result);
-        }
-    }
-
-
-    pub fn write_some(&self, data: &[i16]) -> Result<usize, DriverError> {
-        let data_ptr = data.as_ptr() as *const c_void;
-        let frames = (data.len() / self.channels) as snd_pcm_uframes_t;
-        let mut size = 0;
-        unsafe {
-            match self.wait() {
-                Ok(status) => size = snd_pcm_writei(self.pcm, data_ptr, frames),
-                Err(err) => return Err(err),
-            }
-        }
-        if size < 0 {
-            return Err(create_error("snd_pcm_writei", size as i32));
-        }
-        else {
-            return Ok(size as usize);
-        }
-    }
-
-
-    pub fn output(&self, data: &[i16]) -> Result<SndSize, DriverError> {
-        let available = data.len() / self.channels;
-        let mut written: usize = 0;
-        while written < available {
-            let subdata = &data[written..data.len()];
-            match self.write_some(subdata) {
-                Ok(count) => written += count,
-                Err(err) => return Err(err),
-            }
-        }
-        return Ok(written as SndSize);
-    }
-}
-
-
-impl AudioDriver for Device {
-    fn init(&self) {
-        match Params::new() {
-            Ok(mut params) => {
-                self.setup(&mut params);
-                params.buffer_size();
-                params.free();
-                self.blocking(true);
-                self.prepare();
-
-            },
-            Err(e) => println!("Param error: {}", e.as_string()),
-        }
-    }
-
-    fn play(&self, data: &[i16]) {
-        match self.output(&data) {
-            Ok(size) => println!("Played {} samples", size),
-            Err(e) => println!("Play error: {}", e.as_string()),
-        }
-    }
 }

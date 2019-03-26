@@ -94,8 +94,9 @@ impl Encoder {
 				let mut left = from_raw_parts_mut(channels[0], samples as usize);
 				let mut right = from_raw_parts_mut(channels[1], samples as usize);
 				
-				gen.fill_async(gt, &mut left);
-				gen.fill_async(gt, &mut right);
+				// todo: convert to SampleType
+				//gen.fill_async(gt, &mut left);
+				//gen.fill_async(gt, &mut right);
 				gt += left.len();
 
 				let write_result = vorbis_analysis_wrote(&mut self.vd, samples);

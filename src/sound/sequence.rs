@@ -36,13 +36,13 @@ pub fn create_next_frame_v1(frame_number: usize, frames: &[Frame]) -> Frame {
     let amp = 1.0 / ((a_fct.len() * b_fct.len()) as f64);
     for x in &a_fct {
         for y in &b_fct {
-            //frame.push(*x, *y, amp);
+            frame.push(*x, *y, amp);
         }
     }
 
     //return Frame::from_pair(1 + ((i + 1) - fb1), 1 + (fb2 - i));
 
-    return Frame::from_pair(5 + (i / 8) % 33, 6 + (i / 9) % 4);
+    //return Frame::from_pair(5 + (i / 8) % 33, 6 + (i / 9) % 4);
 
     return frame;
 }

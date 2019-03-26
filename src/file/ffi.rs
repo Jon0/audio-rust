@@ -7,14 +7,14 @@ pub type ogg_int64_t = i64;
 
 #[repr(C)]
 pub struct ogg_packet {
-    pub packet: *mut c_uchar,
-    pub bytes: c_long,
-    pub b_o_s: c_long,
-    pub e_o_s: c_long,
+	pub packet: *mut c_uchar,
+	pub bytes: c_long,
+	pub b_o_s: c_long,
+	pub e_o_s: c_long,
 
-    pub granulepos: ogg_int64_t,
+	pub granulepos: ogg_int64_t,
 
-    pub packetno: ogg_int64_t,
+	pub packetno: ogg_int64_t,
 }
 
 impl Default for ogg_packet {
@@ -32,12 +32,12 @@ impl Default for ogg_packet {
 
 #[repr(C)]
 pub struct oggpack_buffer {
-    endbyte: c_long,
-    endbit: c_int,
+	endbyte: c_long,
+	endbit: c_int,
 
-    buffer: *mut c_uchar,
-    ptr: *mut c_uchar,
-    storage: c_long,
+	buffer: *mut c_uchar,
+	ptr: *mut c_uchar,
+	storage: c_long,
 }
 
 impl Default for oggpack_buffer {
@@ -54,47 +54,47 @@ impl Default for oggpack_buffer {
 
 #[repr(C)]
 pub struct ogg_page {
-    pub header: *mut c_uchar,
-    pub header_len: c_long,
-    pub body: *mut c_uchar,
-    pub body_len: c_long
+	pub header: *mut c_uchar,
+	pub header_len: c_long,
+	pub body: *mut c_uchar,
+	pub body_len: c_long
 }
 
 impl Default for ogg_page {
 	fn default () -> ogg_page {
 		ogg_page {
 			header: null_mut(),
-		    header_len: 0,
-		    body: null_mut(),
-		    body_len: 0
+			header_len: 0,
+			body: null_mut(),
+			body_len: 0
 		}
 	}
 }
 
 #[repr(C)]
 pub struct ogg_stream_state {
-    body_data: *mut c_uchar,
-    body_storage: c_long,
-    body_fill: c_long,
-    body_returned: c_long,
+	body_data: *mut c_uchar,
+	body_storage: c_long,
+	body_fill: c_long,
+	body_returned: c_long,
 
-    lacing_vals: *mut c_int,
-    granule_vals: *mut ogg_int64_t,
+	lacing_vals: *mut c_int,
+	granule_vals: *mut ogg_int64_t,
 
-    lacing_storage: c_long,
-    lacing_fill: c_long,
-    lacing_packet: c_long,
-    lacing_returned: c_long,
+	lacing_storage: c_long,
+	lacing_fill: c_long,
+	lacing_packet: c_long,
+	lacing_returned: c_long,
 
-    header: [c_uchar; 282],
-    header_fill: c_int,
+	header: [c_uchar; 282],
+	header_fill: c_int,
 
-    e_o_s: c_int,
-    b_o_s: c_int,
-    serialno: c_long,
-    pageno: c_long,
-    packetno: ogg_int64_t,
-    granulepos: ogg_int64_t
+	e_o_s: c_int,
+	b_o_s: c_int,
+	serialno: c_long,
+	pageno: c_long,
+	packetno: ogg_int64_t,
+	granulepos: ogg_int64_t
 }
 
 impl Default for ogg_stream_state {
@@ -155,32 +155,32 @@ impl Default for vorbis_info {
 
 #[repr(C)]
 pub struct vorbis_dsp_state {
-    analysisp: c_int,
-    vi: *mut vorbis_info,
+	analysisp: c_int,
+	vi: *mut vorbis_info,
 
-    pcm: *mut *mut c_float,
-    pcmret: *mut *mut c_float,
-    pcm_storage: c_int,
-    pcm_current: c_int,
-    pcm_returned: c_int,
+	pcm: *mut *mut c_float,
+	pcmret: *mut *mut c_float,
+	pcm_storage: c_int,
+	pcm_current: c_int,
+	pcm_returned: c_int,
 
-    preextrapolate: c_int,
-    eofflag: c_int,
+	preextrapolate: c_int,
+	eofflag: c_int,
 
-    lW: c_long,
-    W: c_long,
-    nW: c_long,
-    centerW: c_long,
+	lW: c_long,
+	W: c_long,
+	nW: c_long,
+	centerW: c_long,
 
-    granulepos: ogg_int64_t,
-    sequence: ogg_int64_t,
+	granulepos: ogg_int64_t,
+	sequence: ogg_int64_t,
 
-    glue_bits: ogg_int64_t,
-    time_bits: ogg_int64_t,
-    floor_bits: ogg_int64_t,
-    res_bits: ogg_int64_t,
+	glue_bits: ogg_int64_t,
+	time_bits: ogg_int64_t,
+	floor_bits: ogg_int64_t,
+	res_bits: ogg_int64_t,
 
-    backend_state: *mut c_void,
+	backend_state: *mut c_void,
 }
 
 impl Default for vorbis_dsp_state {
@@ -237,78 +237,78 @@ impl Default for vorbis_comment {
 
 #[repr(C)]
 pub struct vorbis_block {
-    pcm: *mut *mut c_float,
-    opb: oggpack_buffer,
+	pcm: *mut *mut c_float,
+	opb: oggpack_buffer,
 
-    lW: c_long,
-    W: c_long,
-    nW: c_long,
-    pcmend: c_int,
-    mode: c_int,
+	lW: c_long,
+	W: c_long,
+	nW: c_long,
+	pcmend: c_int,
+	mode: c_int,
 
-    eofflag: c_int,
-    granulepos: ogg_int64_t,
-    sequence: ogg_int64_t,
-    vd: *mut vorbis_dsp_state,
+	eofflag: c_int,
+	granulepos: ogg_int64_t,
+	sequence: ogg_int64_t,
+	vd: *mut vorbis_dsp_state,
 
-    localstore: *mut c_void,
-    localtop: c_long,
-    localalloc: c_long,
-    totaluse: c_long,
-    reap: *mut alloc_chain,
+	localstore: *mut c_void,
+	localtop: c_long,
+	localalloc: c_long,
+	totaluse: c_long,
+	reap: *mut alloc_chain,
 
-    glue_bits: c_long,
-    time_bits: c_long,
-    floor_bits: c_long,
-    res_bits: c_long,
+	glue_bits: c_long,
+	time_bits: c_long,
+	floor_bits: c_long,
+	res_bits: c_long,
 
-    internal: *mut c_void
+	internal: *mut c_void
 }
 
 impl Default for vorbis_block {
 	fn default () -> vorbis_block {
 		vorbis_block {
 			pcm: null_mut(),
-		    opb: oggpack_buffer::default(),
+			opb: oggpack_buffer::default(),
 
-		    lW: 0,
-		    W: 0,
-		    nW: 0,
-		    pcmend: 0,
-		    mode: 0,
+			lW: 0,
+			W: 0,
+			nW: 0,
+			pcmend: 0,
+			mode: 0,
 
-		    eofflag: 0,
-		    granulepos: 0,
-		    sequence: 0,
-		    vd: null_mut(),
+			eofflag: 0,
+			granulepos: 0,
+			sequence: 0,
+			vd: null_mut(),
 
-		    localstore: null_mut(),
-		    localtop: 0,
-		    localalloc: 0,
-		    totaluse: 0,
-		    reap: null_mut(),
+			localstore: null_mut(),
+			localtop: 0,
+			localalloc: 0,
+			totaluse: 0,
+			reap: null_mut(),
 
-		    glue_bits: 0,
-		    time_bits: 0,
-		    floor_bits: 0,
-		    res_bits: 0,
+			glue_bits: 0,
+			time_bits: 0,
+			floor_bits: 0,
+			res_bits: 0,
 
-		    internal: null_mut()
+			internal: null_mut()
 		}
 	}
 }
 
 #[repr(C)]
 pub struct alloc_chain {
-    ptr: *mut c_char,
-    next: *mut alloc_chain
+	ptr: *mut c_char,
+	next: *mut alloc_chain
 }
 
 impl Default for alloc_chain {
 	fn default () -> alloc_chain {
 		alloc_chain {
 			ptr: null_mut(),
-		    next: null_mut(),
+			next: null_mut(),
 		}
 	}
 }
@@ -333,22 +333,22 @@ pub const OV_ENOSEEK: c_int = -138;
 #[link(name = "ogg")]
 extern {
 	pub fn ogg_stream_init(os: *mut ogg_stream_state, serialno: c_int) -> c_int;
-    pub fn ogg_stream_clear(os: *mut ogg_stream_state) -> c_int;
-    pub fn ogg_stream_reset(os: *mut ogg_stream_state) -> c_int;
-    pub fn ogg_stream_reset_serialno(os: *mut ogg_stream_state, serialno: c_int)-> c_int;
-    pub fn ogg_stream_destroy(os: *mut ogg_stream_state) -> c_int;
-    pub fn ogg_stream_check(os: *mut ogg_stream_state) -> c_int;
-    pub fn ogg_stream_eos(os: *mut ogg_stream_state) -> c_int;
+	pub fn ogg_stream_clear(os: *mut ogg_stream_state) -> c_int;
+	pub fn ogg_stream_reset(os: *mut ogg_stream_state) -> c_int;
+	pub fn ogg_stream_reset_serialno(os: *mut ogg_stream_state, serialno: c_int)-> c_int;
+	pub fn ogg_stream_destroy(os: *mut ogg_stream_state) -> c_int;
+	pub fn ogg_stream_check(os: *mut ogg_stream_state) -> c_int;
+	pub fn ogg_stream_eos(os: *mut ogg_stream_state) -> c_int;
 
-    pub fn ogg_page_checksum_set(og: *mut ogg_page);
-    pub fn ogg_page_version(og: *const ogg_page) -> c_int;
-    pub fn ogg_page_continued(og: *const ogg_page) -> c_int;
-    pub fn ogg_page_bos(og: *const ogg_page) -> c_int;
-    pub fn ogg_page_eos(og: *const ogg_page) -> c_int;
-    pub fn ogg_page_granulepos(og: *const ogg_page) -> ogg_int64_t;
-    pub fn ogg_page_serialno(og: *const ogg_page) -> c_int;
-    pub fn ogg_page_pageno(og: *const ogg_page) -> c_long;
-    pub fn ogg_page_packets(og: *const ogg_page) -> c_int;
+	pub fn ogg_page_checksum_set(og: *mut ogg_page);
+	pub fn ogg_page_version(og: *const ogg_page) -> c_int;
+	pub fn ogg_page_continued(og: *const ogg_page) -> c_int;
+	pub fn ogg_page_bos(og: *const ogg_page) -> c_int;
+	pub fn ogg_page_eos(og: *const ogg_page) -> c_int;
+	pub fn ogg_page_granulepos(og: *const ogg_page) -> ogg_int64_t;
+	pub fn ogg_page_serialno(og: *const ogg_page) -> c_int;
+	pub fn ogg_page_pageno(og: *const ogg_page) -> c_long;
+	pub fn ogg_page_packets(og: *const ogg_page) -> c_int;
 
 	pub fn ogg_packet_clear(op: *mut ogg_packet);
 
@@ -375,7 +375,7 @@ extern {
 	pub fn vorbis_analysis_blockout(v: *mut vorbis_dsp_state, vb: *mut vorbis_block) -> c_int;
 	pub fn vorbis_analysis(vb: *mut vorbis_block, op: *mut ogg_packet) -> c_int;
 	pub fn vorbis_bitrate_addblock(vb: *mut vorbis_block) -> c_int;
-    pub fn vorbis_bitrate_flushpacket(v: *mut vorbis_dsp_state, op: *mut ogg_packet) -> c_int;
+	pub fn vorbis_bitrate_flushpacket(v: *mut vorbis_dsp_state, op: *mut ogg_packet) -> c_int;
 }
 
 

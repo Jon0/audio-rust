@@ -1,6 +1,7 @@
 use std::f64::consts::PI;
 use num_rational::Rational64;
 
+use format::sample::SampleType;
 use sound::array::*;
 use sound::number::*;
 
@@ -50,8 +51,8 @@ impl Frame {
         self.push(*val.numer() as u64, *val.denom() as u64, amp);
     }
 
-    pub fn gen_sample(&self, base: f64, time: f64) -> f64 {
-        let sample_rate = 44100.0;
+    pub fn gen_sample<F: SampleType>(&self, base: f64, time: f64, amp: f64) -> F {
+        let sample_rate = 48000.0;
         let mut out = 0.0;
 
         for (component, c_amp) in &self.components {
@@ -64,17 +65,18 @@ impl Frame {
                 out += fq.sin() * c_amp * amp_adjust;
             }
         }
-        return out;
+        out *= amp;
+        return F::mono_i16(out as i16);
     }
 
-    pub fn fill(&self, base: f64, start_amp: f64, end_amp: f64, start_time: f64, offset: usize, frame_samples: usize, out: &mut [f64]) {
+    pub fn fill<F: SampleType>(&self, base: f64, start_amp: f64, end_amp: f64, start_time: f64, offset: usize, frame_samples: usize, out: &mut [F]) {
         for sample in 0..out.len() {
             let real_sample = sample + offset;
             let percent = real_sample as f64 / frame_samples as f64;
             let amp = percent * end_amp + (1.0 - percent) * start_amp;
             let s = start_time + real_sample as f64;
 
-            out[sample] += self.gen_sample(base, s) * amp;
+            out[sample].add(&self.gen_sample(base, s, amp));
         }
     }
 
