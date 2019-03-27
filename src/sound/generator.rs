@@ -35,17 +35,20 @@ impl FrameGenerator {
 		let block_length =  self.frame_samples;
 		let block_start: usize = offset / block_length;
 		let block_end: usize = (sample_end / block_length) + 1;
-		let amp = 1200.0;
+		let amp = 2500.0;
 
 		// add required frames
 		self.fill_frames(block_end);
 
 		// convert frames to samples
-		// TODO: something is wrong here
 		for block in block_start..block_end {
+
+			// start_time is the sample index of the blocks first sample
 			let start_time = (block_length * block) as f64;
 			let mut block_start_sample = block_length * block;
 			let mut block_end_sample = (block_length * (block + 1)) - offset;
+
+			// off is the position of data[0] relative to the start of the block
 			let mut off = 0;
 
 			if block_start_sample < offset {
@@ -59,7 +62,6 @@ impl FrameGenerator {
 			if block_end_sample >= data.len() {
 				block_end_sample = data.len();
 			}
-
 			self.frames[block].fill(440.0, amp, 0.0, start_time, off, block_length, &mut data[block_start_sample..block_end_sample]);
 			self.frames[block + 1].fill(440.0, 0.0, amp, start_time, off, block_length, &mut data[block_start_sample..block_end_sample]);
 		}

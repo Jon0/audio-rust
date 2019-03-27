@@ -12,5 +12,5 @@ pub trait AlsaFormat {
 }
 
 impl AlsaFormat for i16 {
-	const FormatId: SndFormatId = SND_PCM_FORMAT_S16; // SND_PCM_FORMAT_S16_LE
+	const FormatId: SndFormatId = SND_PCM_FORMAT_S16_LE;
 }

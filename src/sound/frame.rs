@@ -61,7 +61,7 @@ impl Frame {
             if (freq > 1.0) {
                 let sample_freq = (2.0 * PI * freq) / sample_rate;
                 let fq = time * sample_freq;
-                let amp_adjust = 500.0 / (freq * freq.sqrt()); //freq.sqrt();
+                let amp_adjust = 10000.0 / (freq * freq.sqrt()); //freq.sqrt();
                 out += fq.sin() * c_amp * amp_adjust;
             }
         }

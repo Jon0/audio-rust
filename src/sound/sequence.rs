@@ -44,5 +44,7 @@ pub fn create_next_frame_v1(frame_number: usize, frames: &[Frame]) -> Frame {
 
     //return Frame::from_pair(5 + (i / 8) % 33, 6 + (i / 9) % 4);
 
-    return frame;
+    return Frame::from_pair(5, 4);
+
+    //return frame;
 }
