@@ -1,5 +1,6 @@
 mod ffi;
-pub mod driver;
-pub mod format;
-pub mod mixer;
+mod format;
+mod mixer;
+
+pub mod device;
 pub mod stream;

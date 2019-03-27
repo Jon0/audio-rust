@@ -4,14 +4,36 @@ use format::format::Format;
 
 pub trait SampleType {
 	type Sample;
-	const Channels: usize;
+	const CHANNELS: usize;
 
 	fn zero() -> Self;
 	fn mono(sample: &Self::Sample) -> Self;
 	fn mono_i16(sample: i16) -> Self;
 	fn add(&mut self, other: &Self);
-	fn to_string(&self) -> String;
 }
+
+
+impl SampleType for f32 {
+	type Sample = f32;
+	const CHANNELS: usize = 1;
+
+	fn zero() -> Self {
+		0.0
+	}
+
+	fn mono(sample: &Self::Sample) -> Self {
+		0.0
+	}
+
+	fn mono_i16(sample: i16) -> Self {
+		0.0
+	}
+
+	fn add(&mut self, other: &Self) {
+		*self += other;
+	}
+}
+
 
 
 #[derive(Clone, Debug)]
@@ -23,7 +45,7 @@ pub struct StereoSample<T> {
 
 impl<T: From<i16> + Copy + Clone + Integer + ToString> SampleType for StereoSample<T> {
 	type Sample = T;
-	const Channels: usize = 2;
+	const CHANNELS: usize = 2;
 
 	fn zero() -> Self {
 		StereoSample { left: T::zero(), right: T::zero() }
@@ -40,10 +62,6 @@ impl<T: From<i16> + Copy + Clone + Integer + ToString> SampleType for StereoSamp
 	fn add(&mut self, other: &Self) {
 		self.left = self.left.add(other.left);
 		self.right = self.right.add(other.right);
-	}
-
-	fn to_string(&self) -> String {
-		return self.left.to_string();
 	}
 }
 

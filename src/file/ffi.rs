@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+#![allow(dead_code)]
 
 use std::ptr::null_mut;
 use std::os::raw::{c_char, c_uchar, c_float, c_int, c_long, c_void};
@@ -330,6 +331,7 @@ pub const OV_EBADLINK: c_int = -137;
 pub const OV_ENOSEEK: c_int = -138;
 
 
+#[allow(dead_code)]
 #[link(name = "ogg")]
 extern {
 	pub fn ogg_stream_init(os: *mut ogg_stream_state, serialno: c_int) -> c_int;
@@ -358,6 +360,7 @@ extern {
 }
 
 
+#[allow(dead_code)]
 #[link(name = "vorbis")]
 extern {
 	pub fn vorbis_info_init(vi: *mut vorbis_info);
@@ -379,6 +382,7 @@ extern {
 }
 
 
+#[allow(dead_code)]
 #[link(name = "vorbisenc")]
 extern {
 	pub fn vorbis_encode_init_vbr(vi: *mut vorbis_info, channels: c_long, rate: c_long, base_quality: c_float) -> c_int;

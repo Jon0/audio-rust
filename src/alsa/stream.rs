@@ -1,4 +1,3 @@
-use std::ptr;
 use libc::c_int;
 use libc::c_uint;
 use libc::c_void;
@@ -6,17 +5,17 @@ use libc::c_void;
 use format::format::Format;
 use format::sample::SampleType;
 use format::sample::Stream;
+use format::error::DriverError;
+
+use alsa::device::AlsaDevice;
+use alsa::device::create_error;
 use alsa::format::AlsaFormat;
 use alsa::mixer::Params;
-use alsa::mixer::Device;
-use alsa::mixer::create_error;
 use alsa::ffi::*;
-use format::error::*;
-
 
 pub struct AlsaStream<S: SampleType> {
 
-	device: Device,
+	device: AlsaDevice,
 	sample_rate: usize,
 	buffer: Vec<S>
 
@@ -24,13 +23,13 @@ pub struct AlsaStream<S: SampleType> {
 
 
 impl<F: AlsaFormat, S: SampleType<Sample=F>> AlsaStream<S> {
-	pub fn open(device: Device) -> Result<Self, DriverError> {
+	pub fn open(device: AlsaDevice) -> Result<Self, DriverError> {
 
 		let sample_rate = 48000;
-		let mut params = Params::new().expect("Failed to create hw params");
+		let params = Params::new().expect("Failed to create hw params");
 
 		params.any(&device);
-		params.format(&device, sample_rate, S::Channels as c_uint, F::FormatId);
+		params.format(&device, sample_rate, S::CHANNELS as c_uint, F::FORMAT_ID);
 		params.apply(&device);
 
 		//device.setup(&mut params);
@@ -38,6 +37,11 @@ impl<F: AlsaFormat, S: SampleType<Sample=F>> AlsaStream<S> {
 		params.free();
 
 		return Ok(AlsaStream { device: device, sample_rate: sample_rate as usize, buffer: Vec::new() });
+	}
+
+
+	pub fn get_sample_rate(&self) -> usize {
+		return self.sample_rate;
 	}
 
 
@@ -91,6 +95,6 @@ impl<F: AlsaFormat, S: SampleType<Sample=F>> AlsaStream<S> {
 impl<F: AlsaFormat, S: SampleType<Sample=F>> Stream<S> for AlsaStream<S> {
 
 	fn push(&mut self, frames: &[S]) {
-		self.output(frames);
+		self.output(frames).expect("Failed to output to device");
 	}
 }

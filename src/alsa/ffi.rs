@@ -1,5 +1,7 @@
-use libc::*;
+#![allow(non_snake_case)]
+#![allow(dead_code)]
 
+use libc::*;
 
 pub enum snd_pcm_t {}
 pub enum snd_pcm_hw_params_t {}
@@ -81,24 +83,24 @@ pub const SND_PCM_FORMAT_FLOAT64: c_int = 16;
 pub const SND_PCM_FORMAT_IEC958_SUBFRAME: c_int = 18;
 
 
-
+#[allow(dead_code)]
 #[link(name = "asound")]
 extern {
-    pub fn snd_pcm_open(pcm: *mut *mut snd_pcm_t, name: *const c_char, stream: snd_pcm_stream_t, mode: c_int) -> c_int;
-    pub fn snd_pcm_nonblock(pcm: *mut snd_pcm_t, nonblock: c_int) -> c_int;
-    pub fn snd_pcm_prepare(pcm: *mut snd_pcm_t) -> c_int;
-    pub fn snd_pcm_writei(pcm: *mut snd_pcm_t, buffer: *const c_void, size: snd_pcm_uframes_t) -> snd_pcm_sframes_t;
-    pub fn snd_pcm_wait(pcm: *mut snd_pcm_t, timeout: c_int) -> c_int;
-    pub fn snd_pcm_hw_free(pcm: *mut snd_pcm_t) -> c_int;
-    pub fn snd_pcm_hw_params_malloc(ptr: *mut *mut snd_pcm_hw_params_t) -> c_int;
-    pub fn snd_pcm_hw_params_free(params: *mut snd_pcm_hw_params_t);
-    pub fn snd_pcm_hw_params_any(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t) -> c_int;
-    pub fn snd_pcm_hw_params(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t) -> c_int;
-    pub fn snd_pcm_hw_params_get_buffer_size(params: *const snd_pcm_hw_params_t, val: *mut snd_pcm_uframes_t) -> c_int;
-    pub fn snd_pcm_hw_params_set_rate_resample(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: c_uint) -> c_int;
-    pub fn snd_pcm_hw_params_set_access(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, access: snd_pcm_access_t) -> c_int;
-    pub fn snd_pcm_hw_params_set_format(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: snd_pcm_format_t) -> c_int;
-    pub fn snd_pcm_hw_params_set_channels(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: c_uint) -> c_int;
-    pub fn snd_pcm_hw_params_set_rate_near(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: *mut c_uint, dir: *mut c_int) -> c_int;
-    pub fn snd_strerror(err: c_int) -> *const c_char;
+	pub fn snd_pcm_open(pcm: *mut *mut snd_pcm_t, name: *const c_char, stream: snd_pcm_stream_t, mode: c_int) -> c_int;
+	pub fn snd_pcm_nonblock(pcm: *mut snd_pcm_t, nonblock: c_int) -> c_int;
+	pub fn snd_pcm_prepare(pcm: *mut snd_pcm_t) -> c_int;
+	pub fn snd_pcm_writei(pcm: *mut snd_pcm_t, buffer: *const c_void, size: snd_pcm_uframes_t) -> snd_pcm_sframes_t;
+	pub fn snd_pcm_wait(pcm: *mut snd_pcm_t, timeout: c_int) -> c_int;
+	pub fn snd_pcm_hw_free(pcm: *mut snd_pcm_t) -> c_int;
+	pub fn snd_pcm_hw_params_malloc(ptr: *mut *mut snd_pcm_hw_params_t) -> c_int;
+	pub fn snd_pcm_hw_params_free(params: *mut snd_pcm_hw_params_t);
+	pub fn snd_pcm_hw_params_any(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t) -> c_int;
+	pub fn snd_pcm_hw_params(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t) -> c_int;
+	pub fn snd_pcm_hw_params_get_buffer_size(params: *const snd_pcm_hw_params_t, val: *mut snd_pcm_uframes_t) -> c_int;
+	pub fn snd_pcm_hw_params_set_rate_resample(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: c_uint) -> c_int;
+	pub fn snd_pcm_hw_params_set_access(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, access: snd_pcm_access_t) -> c_int;
+	pub fn snd_pcm_hw_params_set_format(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: snd_pcm_format_t) -> c_int;
+	pub fn snd_pcm_hw_params_set_channels(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: c_uint) -> c_int;
+	pub fn snd_pcm_hw_params_set_rate_near(pcm: *mut snd_pcm_t, params: *mut snd_pcm_hw_params_t, val: *mut c_uint, dir: *mut c_int) -> c_int;
+	pub fn snd_strerror(err: c_int) -> *const c_char;
 }
