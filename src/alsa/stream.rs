@@ -25,7 +25,7 @@ pub struct AlsaStream<S: SampleType> {
 impl<F: AlsaFormat, S: SampleType<Sample=F>> AlsaStream<S> {
 	pub fn open(device: AlsaDevice) -> Result<Self, DriverError> {
 
-		let sample_rate = 48000;
+		let sample_rate = 44100;
 		let params = Params::new().expect("Failed to create hw params");
 
 		params.any(&device);
