@@ -17,7 +17,7 @@ pub struct AlsaStream<S: SampleType> {
 
 	device: AlsaDevice,
 	sample_rate: usize,
-	buffer: Vec<S>
+	_buffer: Vec<S>
 
 }
 
@@ -36,7 +36,7 @@ impl<F: AlsaFormat, S: SampleType<Sample=F>> AlsaStream<S> {
 		let buffer_size = params.buffer_size();
 		params.free();
 
-		return Ok(AlsaStream { device: device, sample_rate: sample_rate as usize, buffer: Vec::new() });
+		return Ok(AlsaStream { device: device, sample_rate: sample_rate as usize, _buffer: Vec::new() });
 	}
 
 

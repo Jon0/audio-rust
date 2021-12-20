@@ -13,4 +13,12 @@ impl DriverError {
     pub fn as_string(&self) -> String {
         return self.desc.clone();
     }
+
+    pub fn get_error(&self) -> i64 {
+        return self.err;
+    }
+
+    pub fn get_name(&self) -> String {
+        return self.name.clone();
+    }
 }

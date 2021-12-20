@@ -16,7 +16,7 @@ pub fn create_freq_table(tuning: f64) -> [f64; 128] {
 }
 
 
-pub fn test_fn(time: usize, max: usize, freq: f64) -> f64 {
+pub fn test_fn(time: usize, max: usize, _freq: f64) -> f64 {
 	let p = (time as f64) / (max as f64);
 	return p * (1.0 - p) * 4.0;
 }

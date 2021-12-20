@@ -1,8 +1,9 @@
+use libc::fread;
 use sound::array::*;
 use sound::frame::*;
 use sound::number::*;
 
-pub fn create_next_frame_old(frame_number: usize, frames: &[Frame]) -> Frame {
+pub fn create_next_frame_old(frame_number: usize, _frames: &[Frame]) -> Frame {
 
 	let mut frame = Frame::new();
 	let i = frame_number as u64;
@@ -22,7 +23,7 @@ pub fn create_next_frame_old(frame_number: usize, frames: &[Frame]) -> Frame {
 	let mut n = 1;
 	let mut d = 1;
 	for fa in f {
-		for (x, a, b) in &stack {
+		for (_x, a, b) in &stack {
 			n += (a % (fa + 1));
 			d += (b % (fa + 1));
 			//frame.push(a, b, 1.0);
@@ -47,20 +48,17 @@ pub fn create_next_frame_old(frame_number: usize, frames: &[Frame]) -> Frame {
 	//return frame;
 }
 
-
-static mut rv: f32 = 0.4;
-
-
-pub fn create_next_frame_v1(frame_number: usize, frames: &[Frame]) -> Frame {
+pub fn create_next_frame_v1(frame_number: usize, _frames: &[Frame]) -> Frame {
 
 	//let mut frame = Frame::new();
+	//frame.push(1, 1, 1.0);
 	let i = frame_number as u64;
 	//let f = factors(i);
 
-	//return Frame::from_pair(i / (60 - ((i / 9) % 57)), (255 / ((i / 9) + 2)) % 42);
-	unsafe {
-		rv = rv * (1.0 - rv) * (3.99 - i as f32 * 0.0001);
-
-		return Frame::from_pair((rv * 16.0) as u64, 12);
-	}
+	let y = i / 8;
+	let z = i / 400;
+	let j = (y * (y + 1) * (y + 2) * (y + 3) * (y + 4) * (y + 5) * (y + 6)) / 5040;
+	let k = 1;//(z * (z + 1) * (z + 2) * (z + 3)) / 24;
+	let d = z % 6 + 3;
+	return Frame::from_pair(j * k as u64, d as u64);
 }

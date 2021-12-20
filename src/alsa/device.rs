@@ -11,7 +11,7 @@ use alsa::mixer::Params;
 use alsa::ffi::*;
 
 pub fn create_error(from: &str, error_code: c_int) -> DriverError {
-	let mut alsa_desc: &str;
+	let alsa_desc: &str;
 	unsafe {
 		let cstr = CStr::from_ptr(snd_strerror(error_code));
 		alsa_desc = cstr.to_str().unwrap();

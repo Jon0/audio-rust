@@ -22,11 +22,11 @@ impl SampleType for f32 {
 	}
 
 	fn mono(sample: &Self::Sample) -> Self {
-		0.0
+		*sample as f32
 	}
 
 	fn mono_i16(sample: i16) -> Self {
-		0.0
+		(sample as f32) / 10000.0
 	}
 
 	fn add(&mut self, other: &Self) {

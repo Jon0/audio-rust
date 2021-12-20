@@ -4,12 +4,12 @@ use sound::number::*;
 
 
 pub struct RationalSet<T> {
-    common_divisor: Factorised<T>,
-    numerator_set: Vec<Factorised<T>>,
+    _common_divisor: Factorised<T>,
+    _numerator_set: Vec<Factorised<T>>,
 }
 
 
 pub struct RationalMap<K, V> {
-    common_divisor: Factorised<K>,
-    numerator_set: HashMap<Factorised<K>, V>,
+    _common_divisor: Factorised<K>,
+    _numerator_set: HashMap<Factorised<K>, V>,
 }

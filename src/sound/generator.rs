@@ -23,7 +23,7 @@ impl FrameGenerator {
 	 * new generation function
 	 */
 	fn fill_frames(&mut self, size: usize) {
-		for block in self.frames.len()..(size + 1) {
+		for _block in self.frames.len()..(size + 1) {
 			let new_frame = create_next_frame_v1(self.frames.len(), &self.frames);
 			self.frames.push(new_frame);
 		}
@@ -35,7 +35,7 @@ impl FrameGenerator {
 		let block_length =  self.frame_samples;
 		let block_start: usize = offset / block_length;
 		let block_end: usize = (sample_end / block_length) + 1;
-		let amp = 2500.0;
+		let amp = 1000.0;
 
 		// add required frames
 		self.fill_frames(block_end);

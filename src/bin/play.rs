@@ -5,9 +5,12 @@ extern crate num_rational;
 extern crate audio_rust;
 
 use std::env;
+use std::sync::Arc;
+use std::sync::Mutex;
 
 use audio_rust::alsa::device::AlsaDevice;
 use audio_rust::alsa::stream::AlsaStream;
+use audio_rust::jack::stream::JackAudioPlayer;
 use audio_rust::player::player::*;
 use audio_rust::format::sample::*;
 use audio_rust::sound::generator::*;
@@ -30,6 +33,10 @@ fn use_device(dev: AlsaDevice) {
 /// hw:1,0
 fn main() {
 	let args: Vec<String> = env::args().collect();
+
+	let generator = Arc::new(Mutex::new(FrameGenerator::new(1024)));
+	let player = JackAudioPlayer::new();
+	player.run(generator);
 
 	match AlsaDevice::open(&args[1]) {
 		Ok(dev) => {

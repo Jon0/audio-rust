@@ -36,11 +36,10 @@ impl Frame {
 
 	pub fn push(&mut self, numer: u64, denom: u64, amp: f64) {
 		if numer > 0 && denom > 0 {
-			let current = self.denom.val();
 			let (keep, diff) = self.denom.to_union(denom);
 
 			// adjust existing components
-			for (component, c_amp) in &mut self.components {
+			for (component, _c_amp) in &mut self.components {
 				component.multiply(diff);
 			}
 			self.components.push((Factorised::create(keep * numer), amp));
@@ -98,7 +97,6 @@ pub struct FrameOld {
 
 impl FrameOld {
 	pub fn create(a: u64, b: u64) -> FrameOld {
-		let sum = Rational64::new(a as i64, b as i64);
 		let a_fct = factors(a);
 		let b_fct = factors(b);
 		let amp = 1.0 / ((a_fct.len() * b_fct.len()) as f64);
@@ -122,10 +120,9 @@ impl FrameOld {
 
 	pub fn create_next(&self, a: u64, b: u64) -> FrameOld {
 
-		let sum = Rational64::new(a as i64, b as i64);
 		let a_fct = factors(a);
 		let b_fct = factors(b);
-		let amp = 1.0 / ((a_fct.len() * b_fct.len()) as f64);
+		let _amp = 1.0 / ((a_fct.len() * b_fct.len()) as f64);
 
 		let (numer_common, numer_uncommon) = common_factors(&self.numer_product_factors, &a_fct);
 		let (denom_common, denom_uncommon) = common_factors(&self.denom_product_factors, &b_fct);
@@ -193,7 +190,7 @@ impl FrameOld {
 
 	pub fn contains(&self, item: Rational64) -> bool {
 		let mut contains = false;
-		for &(comp, amp) in &self.components {
+		for &(comp, _amp) in &self.components {
 			if (comp.numer() == item.numer() && comp.denom() == item.denom()) {
 				contains = true;
 			}
@@ -205,7 +202,7 @@ impl FrameOld {
 	pub fn print_freqs(&self, base: f64) {
 		let mut out = Vec::new();
 
-		for &(component, c_amp) in &self.components {
+		for &(component, _c_amp) in &self.components {
 			let freq = base * (*component.numer() as f64 / *component.denom() as f64);
 			out.push(freq);
 		}

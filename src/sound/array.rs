@@ -178,7 +178,7 @@ pub fn high_freq_factors(factors: &Vec<Vec<u64>>, min_freq: u64, limit: u64) -> 
 		return common;
 	}
 
-	let mut first = 0;
+	//let mut first = 0;
 	let highest = all_factors[all_factors.len() - 1];
 	for comp in all_factors {
 		if comp > 255 {
@@ -216,7 +216,7 @@ pub fn high_freq_factors(factors: &Vec<Vec<u64>>, min_freq: u64, limit: u64) -> 
 
 
 		if freq > min_freq {
-			first += 1;
+			//first += 1;
 			for index in 0..factors.len() {
 				let current_set = &factors[index];
 				let current_progress = progress[index];
@@ -282,7 +282,7 @@ pub fn product(numbers: &Vec<u64>) -> u64 {
 }
 
 
-pub fn sequence(seq: &Seq<u64>, start: u32, size: usize) {
+pub fn sequence(_seq: &Seq<u64>, start: u32, size: usize) {
 	let mut grid = vec![0; size * size];
 	let start: usize = start as usize;
 	for i in 0..size*size {
@@ -317,7 +317,7 @@ pub fn fill_bits(data: &mut [i16]) {
 }
 
 
-pub fn fill_wave(start: usize, end: usize, max: usize, data: &mut [f64]) {
+pub fn fill_wave(_start: usize, _end: usize, _max: usize, data: &mut [f64]) {
 	let mul = (f64::consts::PI * 2.0) / (data.len() as f64);
 	let vol = (data.len() as f64) * 0.05;
 	for t in 0..data.len() {
